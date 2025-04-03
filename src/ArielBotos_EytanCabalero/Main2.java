@@ -118,7 +118,7 @@ public class Main2 {
         boolean committeeExists = nameExistsInArray(committee, committees, committeeCount);
 
         if (!lecturerExists) {
-            System.out.println("This lecturer does not exist in the system.");
+            System.out.println("This lecturer does not exist in the systemq.");
         } else if (!committeeExists) {
             System.out.println("This committee does not exist in the system.");
         } else {
