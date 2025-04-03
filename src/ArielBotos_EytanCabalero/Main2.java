@@ -146,7 +146,7 @@ public class Main2 {
         if (count == array.length) {
             array = expandArray(array);
         }
-        array[count] = name;
+        array[count] = name.toLowerCase();
         return array;
     }
 
