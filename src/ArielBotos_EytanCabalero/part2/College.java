@@ -34,13 +34,12 @@ public class College {
         }
     }
 
-    public boolean addLecturer(Lecturer lecturer) {
+    public void addLecturer(Lecturer lecturer) {
         for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i].getId().equals(lecturer.getId())) return false;
+            if (lecturers[i].getId().equals(lecturer.getId())) return;
         }
         ensureLecturerCapacity();
         lecturers[lecturerCount++] = lecturer;
-        return true;
     }
 
     public boolean addDepartment(Department department) {

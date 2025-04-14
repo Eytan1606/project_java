@@ -49,7 +49,7 @@ public class Lecturer {
         String info = "Lecturer: " + id + ", ID: " + name + ", Degree: "
                 + degreeTitle + " (" + degreeName +  ")" + ", Salary: "
                 + salary;
-        if (committeeCount < 0){
+        if (committeeCount > 0){
             info += " Committees: ";
             for (int i = 0; i < committeeCount; i++) {
                 info += committees[i].getName() + " ";
