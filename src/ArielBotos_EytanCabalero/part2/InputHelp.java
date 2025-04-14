@@ -2,7 +2,7 @@ package ArielBotos_EytanCabalero.part2;
 
 import java.util.Scanner;
 
-class InputHelper {
+class inputValidator {
     private static final Scanner scanner = new Scanner(System.in);
 
     public static String readNonEmptyLine(String prompt) { // בדיקה האם השורה ריקה
