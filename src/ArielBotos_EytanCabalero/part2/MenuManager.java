@@ -11,7 +11,7 @@ public class MenuManager {
         boolean running = true;
         while (running) {
             printMenu();
-            int choice = InputHelper.readPositiveInt("Select an option: ");
+            int choice = inputValidator.readPositiveInt("Select an option: ");
             switch (choice) {
                 case 0 -> running = false;
                 case 1 -> addLecturer();//צריך לטפל באותיות גדולות
@@ -45,21 +45,21 @@ public class MenuManager {
     }
 
     private void addLecturer() {
-        String id = InputHelper.readNonEmptyLine("Enter ID: ");
+        String id = inputValidator.readNonEmptyLine("Enter ID: ");
         if (college.getLecturerById(id) != null ) {
             System.out.println("Lecturer already exists."); return;
         }
-        String name = InputHelper.readNonEmptyLine("Enter name: ");
-        String title = InputHelper.readValidDegree("Enter degree title (BA/MA/Dr/Prof): ");
-        String degree = InputHelper.readNonEmptyLine("Enter degree name: ");
-        double salary = InputHelper.readPositiveDouble("Enter salary: ");
+        String name = inputValidator.readNonEmptyLine("Enter name: ");
+        String title = inputValidator.readValidDegree("Enter degree title (BA/MA/Dr/Prof): ");
+        String degree = inputValidator.readNonEmptyLine("Enter degree name: ");
+        double salary = inputValidator.readPositiveDouble("Enter salary: ");
         college.addLecturer(new Lecturer(id, name, title, degree, salary));
         System.out.println("Lecturer has been added successfully.");
     }
 
     private void addCommittee() {
-        String name = InputHelper.readNonEmptyLine("Enter committee name: ");
-        Lecturer chairMan = college.getLecturerById(InputHelper.readNonEmptyLine("Enter chair name: "));
+        String name = inputValidator.readNonEmptyLine("Enter committee name: ");
+        Lecturer chairMan = college.getLecturerById(inputValidator.readNonEmptyLine("Enter chair name: "));
 
         if (chairMan == null) {
             System.out.println("Lecturer not found.");
@@ -71,36 +71,36 @@ public class MenuManager {
     }
 
     private void addMemberToCommittee() {
-        String cname = InputHelper.readNonEmptyLine("Enter committee name: ");
-        Lecturer l = college.getLecturerById(InputHelper.readNonEmptyLine("Enter lecturer ID: "));
+        String cname = inputValidator.readNonEmptyLine("Enter committee name: ");
+        Lecturer l = college.getLecturerById(inputValidator.readNonEmptyLine("Enter lecturer ID: "));
         if (l == null || !college.addMemberToCommittee(cname, l))
             System.out.println("Error adding member.");
     }
 
     private void updateCommitteeChair() {
-        String name = InputHelper.readNonEmptyLine("Enter committee name: ");
-        Lecturer l = college.getLecturerById(InputHelper.readNonEmptyLine("Enter new chair ID: "));
+        String name = inputValidator.readNonEmptyLine("Enter committee name: ");
+        Lecturer l = college.getLecturerById(inputValidator.readNonEmptyLine("Enter new chair ID: "));
         if (l == null || !college.updateCommitteeChair(name, l))
             System.out.println("Error updating chair.");
     }
 
     private void removeMemberFromCommittee() {
-        String name = InputHelper.readNonEmptyLine("Enter committee name: ");
-        Lecturer l = college.getLecturerById(InputHelper.readNonEmptyLine("Enter lecturer ID: "));
+        String name = inputValidator.readNonEmptyLine("Enter committee name: ");
+        Lecturer l = college.getLecturerById(inputValidator.readNonEmptyLine("Enter lecturer ID: "));
         if (l == null || !college.removeMemberFromCommittee(name, l))
             System.out.println("Error removing member.");
     }
 
     private void addDepartment() {
-        String name = InputHelper.readNonEmptyLine("Enter department name: ");
-        int count = InputHelper.readPositiveInt("Enter number of students: ");
+        String name = inputValidator.readNonEmptyLine("Enter department name: ");
+        int count = inputValidator.readPositiveInt("Enter number of students: ");
         if (!college.addDepartment(new Department(count, name))) {
             System.out.println("Department already exists. try again");
         }
     }
 
     private void averageSalaryByDepartment() {
-        String dname = InputHelper.readNonEmptyLine("Enter department name: ");
+        String dname = inputValidator.readNonEmptyLine("Enter department name: ");
         System.out.println("Average salary: " + college.averageSalaryByDepartment(dname));
     }
 }
