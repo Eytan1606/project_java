@@ -5,7 +5,7 @@ import java.util.Scanner;
 class InputHelper {
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static String readNonEmptyLine(String prompt) {
+    public static String readNonEmptyLine(String prompt) { // בדיקה האם השורה ריקה
         String input;
         do {
             System.out.print(prompt);
@@ -17,7 +17,7 @@ class InputHelper {
         return input;
     }
 
-    public static String readValidDegree(String prompt) {
+    public static String readValidDegree(String prompt) { //בדיקה האם הקלט לא תקין(איזה מחרוזת) וגם אם בדיקה של המספר
         String input;
         do {
             System.out.print(prompt);
@@ -30,7 +30,7 @@ class InputHelper {
         return input;
     }
 
-    public static int readPositiveInt(String prompt) {
+    public static int readPositiveInt(String prompt) { //בדיקה האם המספר חיובי וגם לא מחרוזרת
         int value = -1;
         while (value < 0) {
             System.out.print(prompt);
@@ -64,12 +64,4 @@ class InputHelper {
         return value;
     }
 
-    public static String readOptionalLine(String prompt) {
-        System.out.print(prompt);
-        return scanner.nextLine().trim();
-    }
-
-    public static Scanner getScanner() {
-        return scanner;
-    }
 }

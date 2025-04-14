@@ -3,29 +3,23 @@ package part1;
 import java.util.Scanner;
 
 public class Main2 {
-    // ArielBotos_EytanCabalero
+    private final int MULT = 2;
+    private String collegeName;
+    private String[] lecturers = new String[2];
+    private int lecturerCount = 0;
+    private String[] committees = new String[2];
+    private int committeeCount = 0;
+    private String[] departments = new String[2];
+    private int departmentCount = 0;
 
-    public final static int MULT = 2;
 
-    private static String collegeName;
-
-    private static String[] lecturers = new String[2];
-    private static int lecturerCount = 0;
-
-    private static String[] committees = new String[2];
-    private static int committeeCount = 0;
-
-    private static String[] departments = new String[2];
-    private static int departmentCount = 0;
-
-    public static void main(String[] args) {
+    public void run() {
         Scanner userInput = new Scanner(System.in);
 
         System.out.print("Enter the college name: ");
         collegeName = userInput.nextLine();
 
         int choice;
-
         do {
             displayMenu();
             choice = getValidChoice(userInput);
@@ -35,7 +29,7 @@ public class Main2 {
         userInput.close();
     }
 
-    private static void displayMenu() {
+    private void displayMenu() {
         System.out.println("\n--- Menu ---");
         System.out.println("0 - Exit");
         System.out.println("1 - Add Lecturer");
@@ -49,20 +43,17 @@ public class Main2 {
         System.out.print("Choose an option: ");
     }
 
-    private static int getValidChoice(Scanner userInput) {
+    private int getValidChoice(Scanner userInput) {
         while (true) {
             String inputLine = userInput.nextLine().trim();
-            if (inputLine.length() == 1) {
-                char ch = inputLine.charAt(0);
-                if (ch >= '0' && ch <= '8') {
-                    return ch - '0';
-                }
+            if (inputLine.length() == 1 && inputLine.charAt(0) >= '0' && inputLine.charAt(0) <= '8') {
+                return inputLine.charAt(0) - '0';
             }
             System.out.print("Invalid choice. Please enter a number between 0 and 8: ");
         }
     }
 
-    private static void handleMenuChoice(Scanner userInput, int choice) {
+    private void handleMenuChoice(Scanner userInput, int choice) {
         switch (choice) {
             case 1 -> addItem(userInput, "lecturer");
             case 2 -> addItem(userInput, "committee");
@@ -72,68 +63,60 @@ public class Main2 {
             case 7 -> displayItems("lecturers", lecturers, lecturerCount);
             case 8 -> displayItems("committees", committees, committeeCount);
             case 0 -> System.out.println("Exiting the program...");
-            default -> System.out.println("Invalid choice, try again.");
         }
     }
 
-    private static void addItem(Scanner userInput, String type) {
-        String name;
-        do {
-            System.out.print("Enter " + type + " name (or type 'exit' to cancel): ");
-            name = userInput.nextLine().trim();
+    private void addItem(Scanner userInput, String type) {
+        System.out.print("Enter " + type + " name (or type 'exit' to cancel): ");
+        String name = userInput.nextLine().trim();
 
-            if (name.equalsIgnoreCase("exit")) {
-                System.out.println("Operation cancelled.");
-                return;
-            }
+        if (name.equalsIgnoreCase("exit")) {
+            System.out.println("Operation cancelled.");
+            return;
+        }
 
-            if (name.isEmpty()) {
-                System.out.println("Name cannot be empty. Try again.");
-                continue;
-            }
+        String[] array = getArrayByType(type);
+        int count = getCountByType(type);
 
-            String[] array = getArrayByType(type);
-            int count = getCountByType(type);
+        if (nameExistsInArray(name, array, count)) {
+            System.out.println(capitalize(type) + " already exists. Choose another name.");
+            return;
+        }
 
-            if (nameExistsInArray(name, array, count)) {
-                System.out.println(capitalize(type) + " already exists. Choose another name.");
-            } else {
-                array = addToArray(array, count, name);
-                updateArrayByType(type, array);
-                incrementCountByType(type);
-                System.out.println(capitalize(type) + " added successfully.");
-                break;
-            }
-        } while (true);
+        if (count == array.length) {
+            array = expandArray(array);
+            updateArrayByType(type, array);
+        }
+
+        array[count] = name.toLowerCase();
+        incrementCountByType(type);
+        System.out.println(capitalize(type) + " added successfully.");
     }
 
-    private static void assignLecturerToCommittee(Scanner userInput) {
+    private void assignLecturerToCommittee(Scanner userInput) {
         System.out.print("Enter lecturer name: ");
         String lecturer = userInput.nextLine();
 
         System.out.print("Enter committee name: ");
         String committee = userInput.nextLine();
 
-        boolean lecturerExists = nameExistsInArray(lecturer, lecturers, lecturerCount);
-        boolean committeeExists = nameExistsInArray(committee, committees, committeeCount);
-
-        if (!lecturerExists) {
+        if (!nameExistsInArray(lecturer, lecturers, lecturerCount)) {
             System.out.println("This lecturer does not exist in the system.");
-        } else if (!committeeExists) {
+        } else if (!nameExistsInArray(committee, committees, committeeCount)) {
             System.out.println("This committee does not exist in the system.");
         } else {
             System.out.println("Lecturer assigned to committee recorded.");
         }
     }
 
-    private static void displayItems(String title, String[] array, int count) {
+    private void displayItems(String title, String[] array, int count) {
         System.out.println("List of " + title + ":");
         for (int i = 0; i < count; i++) {
             System.out.println("- " + capitalize(array[i]));
         }
     }
 
-    private static boolean nameExistsInArray(String name, String[] array, int count) {
+    private boolean nameExistsInArray(String name, String[] array, int count) {
         for (int i = 0; i < count; i++) {
             if (array[i] != null && array[i].equalsIgnoreCase(name)) {
                 return true;
@@ -142,23 +125,13 @@ public class Main2 {
         return false;
     }
 
-    private static String[] addToArray(String[] array, int count, String name) {
-        if (count == array.length) {
-            array = expandArray(array);
-        }
-        array[count] = name.toLowerCase();
-        return array;
-    }
-
-    private static String[] expandArray(String[] array) {
+    private String[] expandArray(String[] array) {
         String[] newArray = new String[array.length * MULT];
-        for (int i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
-        }
+        System.arraycopy(array, 0, newArray, 0, array.length);
         return newArray;
     }
 
-    private static String[] getArrayByType(String type) {
+    private String[] getArrayByType(String type) {
         return switch (type) {
             case "lecturer" -> lecturers;
             case "committee" -> committees;
@@ -167,7 +140,7 @@ public class Main2 {
         };
     }
 
-    private static int getCountByType(String type) {
+    private int getCountByType(String type) {
         return switch (type) {
             case "lecturer" -> lecturerCount;
             case "committee" -> committeeCount;
@@ -176,7 +149,7 @@ public class Main2 {
         };
     }
 
-    private static void updateArrayByType(String type, String[] newArray) {
+    private void updateArrayByType(String type, String[] newArray) {
         switch (type) {
             case "lecturer" -> lecturers = newArray;
             case "committee" -> committees = newArray;
@@ -184,7 +157,7 @@ public class Main2 {
         }
     }
 
-    private static void incrementCountByType(String type) {
+    private void incrementCountByType(String type) {
         switch (type) {
             case "lecturer" -> lecturerCount++;
             case "committee" -> committeeCount++;
@@ -192,8 +165,15 @@ public class Main2 {
         }
     }
 
-    private static String capitalize(String text) {
-        if (text == null || text.isEmpty()) return text;
-        return text.substring(0, 1).toUpperCase() + text.substring(1);
+    private String capitalize(String text) {
+        return text == null || text.isEmpty() ? text : text.substring(0, 1).toUpperCase() + text.substring(1);
+    }
+    public static void main(String[] args) {
+        new Main2().run();
     }
 }
+
+
+
+
+

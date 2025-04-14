@@ -46,7 +46,7 @@ public class MenuManager {
 
     private void addLecturer() {
         String id = InputHelper.readNonEmptyLine("Enter ID: ");
-        if (college.getLecturerById(id) != null) {
+        if (college.getLecturerById(id) != null ) {
             System.out.println("Lecturer already exists."); return;
         }
         String name = InputHelper.readNonEmptyLine("Enter name: ");
@@ -54,12 +54,13 @@ public class MenuManager {
         String degree = InputHelper.readNonEmptyLine("Enter degree name: ");
         double salary = InputHelper.readPositiveDouble("Enter salary: ");
         college.addLecturer(new Lecturer(id, name, title, degree, salary));
+        System.out.println("Lecturer has been added successfully");
     }
 
     private void addCommittee() {
-        String cname = InputHelper.readNonEmptyLine("Enter committee name: ");
-        Lecturer chair = college.getLecturerById(InputHelper.readNonEmptyLine("Enter chair ID: "));
-        if (chair == null || !college.addCommittee(cname, chair)){
+        String name = InputHelper.readNonEmptyLine("Enter committee name: ");
+        Lecturer chairMan = college.getLecturerById(InputHelper.readNonEmptyLine("Enter chair ID: "));
+        if (chairMan == null || college.AddCommittee(name, chairMan)){
             System.out.println("Error creating committee.");
         } else {
             System.out.println("good");
@@ -92,7 +93,7 @@ public class MenuManager {
         String dname = InputHelper.readNonEmptyLine("Enter department name: ");
         int count = InputHelper.readPositiveInt("Enter number of students: ");
         if (!college.addDepartment(new Department(count, dname))) {
-            System.out.println("Department already exists.");
+            System.out.println("Department already exists. try again");
         }
     }
 

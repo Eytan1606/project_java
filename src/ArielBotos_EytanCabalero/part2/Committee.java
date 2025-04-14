@@ -15,10 +15,10 @@ public class Committee {
     }
     public String getName(){ return name;}
 
-    public boolean addMember(Lecturer lecturer){
+    public boolean addMember(Lecturer lecturer){ // הוספת חבר לתוך הוועדה
         if (lecturer == chair) return false;
         for (int i=0; i<membersCount; i++){
-            if (members[i] == lecturer) return false;
+            if (members[i] == lecturer) return false; // בדיקה האם הוא כבר נמצא בתוך הוועדה
         }
         if (membersCount == members.length){
             members = Arrays.copyOf(members, members.length*2);
@@ -49,14 +49,14 @@ public class Committee {
         return false;
     }
     @Override
-    public String toString() {
-        String info = "Committee: " + name + ", Chair: " + chair.getName() + " ";
+    public String toString() { // בסימן שאלה אם זה מותר, יש דרך אחרת בתוץ התוכנית
+        StringBuilder info = new StringBuilder("Committee: " + name + ", Chair: " + chair.getName() + " ");
         if (membersCount > 0) {
-            info += "Members: ";
+            info.append("Members: ");
             for (int i = 0; i < membersCount; i++) {
-                info += members[i].getName() + " ";
+                info.append(members[i].getName()).append(" ");
             }
         }
-        return info;
+        return info.toString();
     }
 }
