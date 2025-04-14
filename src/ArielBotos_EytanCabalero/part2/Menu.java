@@ -1,9 +1,9 @@
 package ArielBotos_EytanCabalero.part2;
 
-public class MenuManager {
+public class Menu {
     private final College college;
 
-    public MenuManager(College college) {
+    public Menu(College college) {
         this.college = college;
     }
 
