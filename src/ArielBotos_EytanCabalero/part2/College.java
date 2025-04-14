@@ -52,11 +52,11 @@ public class College {
         return true;
     }
 
-    public boolean addCommittee(String name, Lecturer chairman) {
+    public boolean AddCommittee(String name, Lecturer chairman) {
         for (int i = 0; i < committeeCount; i++) {
             if (committees[i].getName().equals(name)) return false;
         }
-        if (!chairman.getDegreeTitle().equals("Dr") && !chairman.getDegreeTitle().equals("Prof")) return false;
+        if (!chairman.getDegreeTitle().equals("Dr") && !chairman.getDegreeTitle().equals("Prof")) {return false;}
         ensureCommitteeCapacity();
         committees[committeeCount++] = new Committee(name, chairman);
         return true;

@@ -15,8 +15,8 @@ public class Lecturer {
     public Lecturer(String name, String id, String degreeName, String degreeTitle, double salary){
         this.name =name;
         this.id = id;
-        this.degreeTitle = degreeTitle;
         this.degreeName = degreeName;
+        this.degreeTitle = degreeTitle;
         this.salary = salary;
     }
 
@@ -44,8 +44,9 @@ public class Lecturer {
             }
         }
     }
-    public String toString1(){
-        String info = "Lecturer: " + name + ", ID: " + id + ", Degree: "
+    @Override
+    public String toString(){
+        String info = "Lecturer: " + id + ", ID: " + name + ", Degree: "
                 + degreeTitle + " (" + degreeName +  ")" + ", Salary: "
                 + salary;
         if (committeeCount < 0){
