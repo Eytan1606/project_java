@@ -16,7 +16,7 @@ public class Committee {
     public String getName(){ return name;}
 
     public boolean addMember(Lecturer lecturer){ // הוספת חבר לתוך הוועדה
-        if (lecturer == chair) return false;
+        if (lecturer == chair) return true;
         for (int i=0; i<membersCount; i++){
             if (members[i] == lecturer) return false; // בדיקה האם הוא כבר נמצא בתוך הוועדה
         }
@@ -28,16 +28,17 @@ public class Committee {
         return true;
     }
     public boolean removeMembers(Lecturer lecturer){
-        int i =0;
-        while (i<membersCount) { i++;
+        int i = 0;
+        while (i < membersCount) {
             if (members[i] == lecturer){
-                for (int j = i; j < membersCount -1; j++){
-                    members[j] = members[j+1];
+                for (int j = i; j < membersCount - 1; j++) {
+                    members[j] = members[j + 1];
                 }
-            }membersCount --;
-            lecturer.leaveCommittee(this);
-            return true;
-
+                membersCount--;
+                lecturer.leaveCommittee(this);
+                return true;
+            }
+            i++;
         }
         return false;
     }
