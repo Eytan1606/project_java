@@ -3,7 +3,7 @@ package ArielBotos_EytanCabalero.part2;
 import java.util.Arrays;
 
 public class College {
-    private String name;
+    private  final String name;
     private Lecturer[] lecturers = new Lecturer[2];
     private int lecturerCount = 0;
     private Department[] departments = new Department[2];

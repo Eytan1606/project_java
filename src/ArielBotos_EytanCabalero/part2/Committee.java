@@ -28,20 +28,19 @@ public class Committee {
         return true;
     }
     public boolean removeMembers(Lecturer lecturer){
-        int i = 0;
-        while (i < membersCount) {
-            if (members[i] == lecturer){
-                for (int j = i; j < membersCount - 1; j++) {
-                    members[j] = members[j + 1];
-                }
-                membersCount--;
-                lecturer.leaveCommittee(this);
-                return true;
-            }
-            i++;
-        }
-        return false;
+       for (int i = 0; i< membersCount; i++){
+           if (members[i]==lecturer){
+               for (int j = i; j< membersCount -1; j++){
+                   members[j] = members[j+1];
+               }
+               members[--membersCount] = null;
+               lecturer.leaveCommittee(this);
+               return true;
+           }
+       }
+       return false;
     }
+
     public boolean setChair(Lecturer lecturer){
         if(lecturer.getDegreeTitle().equals("Dr") || lecturer.getDegreeTitle().equals("Prof")) {
             this.chair = lecturer;
@@ -50,7 +49,7 @@ public class Committee {
         return false;
     }
     @Override
-    public String toString() { // בסימן שאלה אם זה מותר, יש דרך אחרת בתוץ התוכנית
+    public String toString() {
         StringBuilder info = new StringBuilder("Committee: " + name + ", Chair: " + chair.getName() + " ");
         if (membersCount > 0) {
             info.append("Members: ");

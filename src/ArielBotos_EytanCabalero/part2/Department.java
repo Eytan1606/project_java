@@ -20,7 +20,7 @@ public class Department{
         return Arrays.copyOf(lecturers , LecturerCount);
     }
 
-    public void AddLecturer(Lecturer lecturer){
+    public void addLecturer(Lecturer lecturer){
         for ( int i = 0; i < LecturerCount; i++){
             if (lecturers[i] ==lecturer) return;
         }
@@ -41,4 +41,7 @@ public class Department{
         return info;
     }
 
+    public char[] getName() {
+        return null;
+    }
 }

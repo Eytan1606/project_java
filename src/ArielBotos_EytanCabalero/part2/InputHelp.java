@@ -22,7 +22,8 @@ class inputValidator {
         do {
             System.out.print(prompt);
             input = scanner.nextLine().trim();
-            if (!input.equals("BA") && !input.equals("MA") && !input.equals("Dr") && !input.equals("Prof")) {
+             input =input.toUpperCase();
+            if (!input.equals("BA") && !input.equals("MA") && !input.equals("DR") && !input.equals("PROF")) {
                 System.out.println("Invalid degree title. Allowed: BA, MA, Dr, Prof. Please try again.");
                 input = "";
             }
@@ -30,7 +31,7 @@ class inputValidator {
         return input;
     }
 
-    public static int readPositiveInt(String prompt) { //בדיקה האם המספר חיובי וגם לא מחרוזרת
+    public static int readPositiveInt(String prompt) {
         int value = -1;
         while (value < 0) {
             System.out.print(prompt);
