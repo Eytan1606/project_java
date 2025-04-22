@@ -1,4 +1,4 @@
-package ArielBotos_EytanCabalero;
+package part1;
 
 import java.util.Scanner;
 
