@@ -2,8 +2,9 @@ package ArielBotos_EytanCabalero2;
 
 public class Lecturer {
     private static final int ARRAY_GROWTH = 2;
+    //dsv
 
-    private String name;
+    public String name;
     private String id;
     private Degree degree;
     private String degreeName;

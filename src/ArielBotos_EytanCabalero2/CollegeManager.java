@@ -65,7 +65,7 @@ public class CollegeManager {
     public Lecturer findLecturerByName(String name) {
         String search = name.toLowerCase();
         for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i].getName().toLowerCase().equals(search)) {
+            if (lecturers[i].name.equals(search)) {
                 return lecturers[i];
             }
         }
