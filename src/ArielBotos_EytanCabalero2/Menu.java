@@ -6,7 +6,7 @@ public class Menu {
     public Menu(CollegeManager manager) {
         this.manager = manager;
     }
-
+// this part has to be change
     public String addLecturer(String name, String id, Degree degree, String degreeName, double salary) {
         if (manager.findLecturerByName(name) != null) {
             return "Lecturer already exists.";

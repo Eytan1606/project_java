@@ -31,13 +31,20 @@ public class Main {
             System.out.print("Enter your choice: ");
             String input = scanner.nextLine().trim();
 
-            int choice;
-            try {
-                choice = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
+            boolean isNumeric = true;
+            for (char c : input.toCharArray()) {
+                if (!Character.isDigit(c)) {
+                    isNumeric = false;
+                    break;
+                }
+            }
+
+            if (!isNumeric) {
                 System.out.println("Invalid input. Please enter a number.");
                 continue;
             }
+
+            int choice = Integer.parseInt(input);
 
             switch (choice) {
                 case 0 -> {
