@@ -69,4 +69,18 @@ public class Menu {
         committee.removeMember(lecturer);
         return "Member removed from committee.";
     }
+    public String removeLecturerFromDepartment(String deptName, String lecturerName) {
+        Department dept = manager.findDepartmentByName(deptName);
+        Lecturer lecturer = manager.findLecturerByName(lecturerName);
+        if (dept == null || lecturer == null) return "Department or Lecturer not found.";
+        dept.removeLecturer(lecturer);
+        lecturer.setDepartment(null);
+        return "Lecturer removed from department.";
+    }
+
+    public String displayAllDepartments() {
+        manager.printAllDepartments();
+        return "Displayed all departments.";
+    }
+
 }

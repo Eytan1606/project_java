@@ -71,6 +71,12 @@ public class CollegeManager {
         }
         return null;
     }
+    public void printAllDepartments() {
+        for (int i = 0; i < departmentCount; i++) {
+            System.out.println(departments[i]);
+        }
+    }
+
 
     public Department findDepartmentByName(String name) {
         String search = name.toLowerCase();

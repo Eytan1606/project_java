@@ -26,6 +26,9 @@ public class Main {
             System.out.println("9  - Average Salary by Department");
             System.out.println("10 - Display All Lecturers");
             System.out.println("11 - Display All Committees");
+            System.out.println("12 - Display All Departments");
+            System.out.println("13 - Remove Lecturer from Department");
+
             System.out.println("===========================================");
 
             System.out.print("Enter your choice: ");
@@ -146,6 +149,21 @@ public class Main {
                     System.out.println("\n--- All Committees ---");
                     manager.printAllCommittees();
                 }
+                case 12 -> {
+                    System.out.println("\n--- All Departments ---");
+                    manager.printAllDepartments();
+                }
+                case 13 -> {
+                    System.out.println("\n--- Remove Lecturer from Department ---");
+                    System.out.print("Enter Department Name: ");
+                    String deptName = scanner.nextLine().trim();
+
+                    System.out.print("Enter Lecturer Name to Remove: ");
+                    String lecturerName = scanner.nextLine().trim();
+
+                    System.out.println(menu.removeLecturerFromDepartment(deptName, lecturerName));
+                }
+
                 default -> System.out.println("Invalid choice.");
             }
         }
