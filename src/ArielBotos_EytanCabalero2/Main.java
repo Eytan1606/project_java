@@ -1,184 +1,205 @@
+// Main.java
 package ArielBotos_EytanCabalero2;
 
 import java.util.Scanner;
 
 public class Main {
+    private static final Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter the college name: ");
-        String collegeName = scanner.nextLine();
-
-        CollegeManager manager = new CollegeManager(collegeName);
+        String collegeName = readNonEmpty("Enter college name: ");
+        College college  = new College(collegeName);
 
         while (true) {
-            System.out.println("\n========= COLLEGE MANAGEMENT MENU =========");
-            System.out.println("0  - Exit");
-            System.out.println("1  - Add Lecturer");
-            System.out.println("2  - Add Department");
-            System.out.println("3  - Add Committee");
-            System.out.println("4  - Assign Lecturer to Department");
-            System.out.println("5  - Assign Lecturer to Committee");
-            System.out.println("6  - Update Committee Chair");
-            System.out.println("7  - Remove Member from Committee");
-            System.out.println("8  - Average Salary (All Lecturers)");
-            System.out.println("9  - Average Salary by Department");
-            System.out.println("10 - Display All Lecturers");
-            System.out.println("11 - Display All Committees");
-            System.out.println("===========================================");
-
-            System.out.print("Enter your choice: ");
-            String input = scanner.nextLine().trim();
-
-            if (!input.matches("\\d+")) {
-                System.out.println("Invalid input. Please enter a number.");
-                continue;
-            }
-
-            int choice = Integer.parseInt(input);
-
+            printMenu();
+            int choice = readInt("Choose an option (0–16): ", 0, 16);
+            System.out.println();
             switch (choice) {
-                case 0 -> {
-                    System.out.println("Program terminated.");
-                    return;
+                case 0  -> { System.out.println("Goodbye!"); return; }
+                case 1  -> flowAddLecturer(college);
+                case 2  -> flowRemoveLecturer(college);
+                case 3  -> flowAddDepartment(college);
+                case 4  -> flowRemoveDepartment(college);
+                case 5  -> flowAddCommittee(college);
+                case 6  -> flowRemoveCommittee(college);
+                case 7  -> System.out.printf("Average salary: ₪%.2f%n",
+                        college.getAverageSalaryAllLecturers());
+                case 8  -> {
+                    String d = readNonEmpty("Department name: ");
+                    System.out.printf("Average in %s: ₪%.2f%n",
+                            d, college.getAverageSalaryByDepartment(d));
                 }
-                case 1 -> {
-                    System.out.println("\n--- Add Lecturer ---");
-                    System.out.print("Enter Lecturer Name: ");
-                    String name = scanner.nextLine().trim();
-                    System.out.print("Enter ID: ");
-                    String id = scanner.nextLine().trim();
-                    System.out.print("Enter Degree (BA/MA/DR/PROF): ");
-                    Degree degree = Degree.valueOf(scanner.nextLine().trim().toUpperCase());
-                    System.out.print("Enter Degree Name: ");
-                    String degreeName = scanner.nextLine().trim();
-                    System.out.print("Enter Salary: ");
-                    double salary = Double.parseDouble(scanner.nextLine().trim());
-
-                    if (manager.findLecturerByName(name) != null) {
-                        System.out.println("Lecturer already exists.");
-                    } else {
-                        Lecturer lecturer = new Lecturer(name, id, degree, degreeName, salary);
-                        manager.addLecturer(lecturer);
-                        System.out.println("Lecturer added successfully.");
-                    }
-                }
-                case 2 -> {
-                    System.out.println("\n--- Add Department ---");
-                    System.out.print("Enter Department Name: ");
-                    String deptName = scanner.nextLine().trim();
-                    System.out.print("Enter Number of Students: ");
-                    int students = Integer.parseInt(scanner.nextLine().trim());
-
-                    if (manager.findDepartmentByName(deptName) != null) {
-                        System.out.println("Department already exists.");
-                    } else {
-                        manager.addDepartment(new Department(deptName, students));
-                        System.out.println("Department added successfully.");
-                    }
-                }
-                case 3 -> {
-                    System.out.println("\n--- Add Committee ---");
-                    System.out.print("Enter Committee Name: ");
-                    String committeeName = scanner.nextLine().trim();
-                    System.out.print("Enter Chair Lecturer Name: ");
-                    String chairName = scanner.nextLine().trim();
-                    Lecturer chair = manager.findLecturerByName(chairName);
-
-                    if (chair == null || !chair.getDegree().canBeChair()) {
-                        System.out.println("Invalid chair.");
-                    } else if (manager.findCommitteeByName(committeeName) != null) {
-                        System.out.println("Committee already exists.");
-                    } else {
-                        manager.addCommittee(new Committee(committeeName, chair));
-                        System.out.println("Committee added successfully.");
-                    }
-                }
-                case 4 -> {
-                    System.out.println("\n--- Assign Lecturer to Department ---");
-                    System.out.print("Enter Lecturer Name: ");
-                    String lecturerName = scanner.nextLine().trim();
-                    System.out.print("Enter Department Name: ");
-                    String deptName = scanner.nextLine().trim();
-
-                    Lecturer lecturer = manager.findLecturerByName(lecturerName);
-                    Department dept = manager.findDepartmentByName(deptName);
-
-                    if (lecturer == null || dept == null) {
-                        System.out.println("Lecturer or Department not found.");
-                    } else {
-                        dept.addLecturer(lecturer);
-                        lecturer.setDepartment(dept);
-                        System.out.println("Lecturer assigned to department.");
-                    }
-                }
-                case 5 -> {
-                    System.out.println("\n--- Assign Lecturer to Committee ---");
-                    System.out.print("Enter Committee Name: ");
-                    String comName = scanner.nextLine().trim();
-                    System.out.print("Enter Lecturer Name: ");
-                    String lecName = scanner.nextLine().trim();
-
-                    Committee committee = manager.findCommitteeByName(comName);
-                    Lecturer lecturer = manager.findLecturerByName(lecName);
-
-                    if (committee == null || lecturer == null) {
-                        System.out.println("Committee or Lecturer not found.");
-                    } else {
-                        boolean added = committee.addMember(lecturer);
-                        System.out.println(added ? "Lecturer assigned to committee." : "Lecturer already in committee.");
-                    }
-                }
-                case 6 -> {
-                    System.out.println("\n--- Update Committee Chair ---");
-                    System.out.print("Enter Committee Name: ");
-                    String comName = scanner.nextLine().trim();
-                    System.out.print("Enter New Chair Name: ");
-                    String chairName = scanner.nextLine().trim();
-
-                    Committee committee = manager.findCommitteeByName(comName);
-                    Lecturer newChair = manager.findLecturerByName(chairName);
-
-                    if (committee == null || newChair == null || !newChair.getDegree().canBeChair()) {
-                        System.out.println("Invalid committee or chair.");
-                    } else {
-                        committee.setChair(newChair);
-                        System.out.println("Committee chair updated.");
-                    }
-                }
-                case 7 -> {
-                    System.out.println("\n--- Remove Member from Committee ---");
-                    System.out.print("Enter Committee Name: ");
-                    String comName = scanner.nextLine().trim();
-                    System.out.print("Enter Member Name to Remove: ");
-                    String memberName = scanner.nextLine().trim();
-
-                    Committee committee = manager.findCommitteeByName(comName);
-                    Lecturer lecturer = manager.findLecturerByName(memberName);
-
-                    if (committee == null || lecturer == null) {
-                        System.out.println("Committee or Lecturer not found.");
-                    } else {
-                        committee.removeMember(lecturer);
-                        System.out.println("Member removed from committee.");
-                    }
-                }
-                case 8 -> System.out.println("\nAverage Salary (All Lecturers): " + manager.averageCollegeSalary());
-                case 9 -> {
-                    System.out.println("\n--- Average Salary by Department ---");
-                    System.out.print("Enter Department Name: ");
-                    String deptName = scanner.nextLine().trim();
-                    System.out.println("Average Salary: " + manager.averageDepartmentSalary(deptName));
+                case 9  -> {
+                    for (Lecturer l : college.getLecturers())
+                        System.out.println(l);
                 }
                 case 10 -> {
-                    System.out.println("\n--- All Lecturers ---");
-                    manager.printAllLecturers();
+                    for (Department dpt : college.getDepartments())
+                        System.out.println(dpt);
                 }
                 case 11 -> {
-                    System.out.println("\n--- All Committees ---");
-                    manager.printAllCommittees();
+                    for (Committee c : college.getCommittees())
+                        System.out.println(c);
                 }
+                case 14 -> {
+                    String n1 = readNonEmpty("First DR/Prof name: ");
+                    String n2 = readNonEmpty("Second DR/Prof name: ");
+                    System.out.println(college.compareByArticles(n1, n2));
+                }
+                case 15 -> {
+                    String d1 = readNonEmpty("First department: ");
+                    String d2 = readNonEmpty("Second department: ");
+                    int crit = readInt("Criterion (1=#lecturers, 2=#articles): ", 1, 2);
+                    System.out.println(college.compareDepartments(d1, d2, crit));
+                }
+                case 16 -> {
+                    String orig = readNonEmpty("Committee to clone: ");
+                    boolean ok = college.cloneCommittee(orig);
+                    System.out.println(ok ? "Cloned successfully." : "Committee not found.");
+                }
+                default -> System.out.println("Option not implemented or invalid.");
+            }
+            System.out.println();
+        }
+    }
+
+    // ————————— Flows —————————
+
+    private static void flowAddLecturer(College c) {
+        String name  = readNonEmpty("Lecturer name: ");
+        int    id    = readInt("Lecturer ID (>0): ", 1, Integer.MAX_VALUE);
+
+        // היפטרנו מ-List, משתמשים במערך רגיל
+        String[] validDegrees = { "BA", "MA", "DR", "PROF" };
+        String deg = readOption("Degree [BA, MA, DR, PROF]: ", validDegrees);
+
+        String major = readNonEmpty("Major: ");
+        double sal   = readDouble("Salary (>=0): ");
+
+        Lecturer lec;
+        if ("PROF".equals(deg)) {
+            String body = readNonEmpty("Granting body: ");
+            lec = new Professor(name, id, Degree.PROF, major, sal, body);
+        } else if ("DR".equals(deg)) {
+            lec = new ResearchLecturer(name, id, Degree.DR, major, sal);
+        } else {
+            lec = new Lecturer(name, id, Degree.valueOf(deg), major, sal);
+        }
+        System.out.println(c.addLecturer(lec) ? "Lecturer added." : "Already exists.");
+    }
+
+    private static void flowRemoveLecturer(College c) {
+        String name = readNonEmpty("Lecturer name to remove: ");
+        System.out.println(c.removeLecturer(name) ? "Removed." : "Not found.");
+    }
+
+    private static void flowAddDepartment(College c) {
+        String name = readNonEmpty("Department name: ");
+        int ns = readInt("Number of students (>=0): ", 0, Integer.MAX_VALUE);
+        Department d = new Department(name, ns);
+        System.out.println(c.addDepartment(d) ? "Dept added." : "Already exists.");
+    }
+
+    private static void flowRemoveDepartment(College c) {
+        String name = readNonEmpty("Department to remove: ");
+        System.out.println(c.removeDepartment(name) ? "Removed." : "Not found.");
+    }
+
+    private static void flowAddCommittee(College c) {
+        String cn = readNonEmpty("Committee name: ");
+        String ch = readNonEmpty("Chair name: ");
+        Lecturer chair = c.findLecturerByName(ch);
+        if (chair == null) {
+            System.out.println("Chair not found.");
+            return;
+        }
+        try {
+            Committee cm = new Committee(cn, chair);
+            System.out.println(c.addCommittee(cm) ? "Committee added." : "Already exists.");
+        } catch (InvalidChairException e) {
+            System.out.println("Cannot create committee: " + e.getMessage());
+        }
+    }
+
+    private static void flowRemoveCommittee(College c) {
+        String name = readNonEmpty("Committee to remove: ");
+        System.out.println(c.removeCommittee(name) ? "Removed." : "Not found.");
+    }
+
+    // ————————— Input Helpers —————————
+
+    private static String readNonEmpty(String prompt) {
+        String s;
+        do {
+            System.out.print(prompt);
+            s = sc.nextLine().trim();
+            if (s.isEmpty()) System.out.println("⚠️ Input cannot be blank.");
+        } while (s.isEmpty());
+        return s;
+    }
+
+    private static int readInt(String prompt, int min, int max) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                int v = Integer.parseInt(sc.nextLine().trim());
+                if (v < min || v > max) {
+                    System.out.printf("⚠️ Enter a number between %d and %d.%n", min, max);
+                } else {
+                    return v;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("⚠️ Invalid integer, try again.");
             }
         }
+    }
+
+    private static double readDouble(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            try {
+                double v = Double.parseDouble(sc.nextLine().trim());
+                if (v < 0) {
+                    System.out.println("⚠️ Must be non-negative.");
+                } else {
+                    return v;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("⚠️ Invalid number, try again.");
+            }
+        }
+    }
+
+    private static String readOption(String prompt, String[] opts) {
+        while (true) {
+            System.out.print(prompt);
+            String s = sc.nextLine().trim().toUpperCase();
+            for (String o : opts) {
+                if (o.equals(s)) {
+                    return s;
+                }
+            }
+            System.out.println("⚠️ Please enter one of: " + String.join(", ", opts));
+        }
+    }
+
+    private static void printMenu() {
+        System.out.println("=== ACADEMIC MANAGER ===");
+        System.out.println("0  – Exit");
+        System.out.println("1  – Add Lecturer");
+        System.out.println("2  – Remove Lecturer");
+        System.out.println("3  – Add Department");
+        System.out.println("4  – Remove Department");
+        System.out.println("5  – Add Committee");
+        System.out.println("6  – Remove Committee");
+        System.out.println("7  – Avg salary (all)");
+        System.out.println("8  – Avg salary by dept");
+        System.out.println("9  – List all lecturers");
+        System.out.println("10 – List all departments");
+        System.out.println("11 – List all committees");
+        System.out.println("14 – Compare DR/Prof by # articles");
+        System.out.println("15 – Compare two departments");
+        System.out.println("16 – Clone committee");
+        System.out.print("> ");
     }
 }

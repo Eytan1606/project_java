@@ -1,86 +1,81 @@
+// Department.java
 package ArielBotos_EytanCabalero2;
 
+import java.util.Objects;
+
 public class Department {
-    private static final int ARRAY_GROWTH = 2;
+    private static final int GROW = 2;
 
     private String name;
-    private int studentCount;
+    private int numStudents;
     private Lecturer[] lecturers;
     private int lecturerCount;
 
-    public Department(String name, int studentCount) {
-        this.name = name.toLowerCase();
-        this.studentCount = studentCount;
+    public Department(String name, int numStudents) {
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("Dept name empty");
+        if (numStudents < 0)            throw new IllegalArgumentException("Students <0");
+        this.name = name.trim().toLowerCase();
+        this.numStudents = numStudents;
         this.lecturers = new Lecturer[2];
         this.lecturerCount = 0;
     }
 
-    public String getName() {
-        return capitalize(name);
-    }
+    public String getName() { return name; }
+    public int getNumStudents() { return numStudents; }
 
-    public int getStudentCount() {
-        return studentCount;
-    }
-
-    public void setStudentCount(int studentCount) {
-        this.studentCount = studentCount;
-    }
-
-    public Lecturer[] getLecturers() {
-        return lecturers;
-    }
-
-    public int getLecturerCount() {
-        return lecturerCount;
-    }
-
-    public void addLecturer(Lecturer lecturer) {
-        if (!isInDepartment(lecturer)) {
-            if (lecturerCount == lecturers.length) expandLecturers();
-            lecturers[lecturerCount++] = lecturer;
+    public boolean addLecturer(Lecturer l) {
+        if (l == null) return false;
+        for (int i = 0; i < lecturerCount; i++)
+            if (lecturers[i].equals(l)) return false;
+        if (lecturerCount == lecturers.length) {
+            Lecturer[] larger = new Lecturer[lecturers.length * GROW];
+            for (int i = 0; i < lecturerCount; i++) larger[i] = lecturers[i];
+            lecturers = larger;
         }
+        lecturers[lecturerCount++] = l;
+        l.setDepartment(this);
+        return true;
     }
 
-    public void removeLecturer(Lecturer lecturer) {
+    public boolean removeLecturer(Lecturer l) {
         for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i] == lecturer) {
-                lecturers[i] = lecturers[--lecturerCount];
-                lecturers[lecturerCount] = null;
-                break;
+            if (lecturers[i].equals(l)) {
+                for (int j = i; j < lecturerCount - 1; j++)
+                    lecturers[j] = lecturers[j + 1];
+                lecturerCount--;
+                l.removeDepartment();
+                return true;
             }
-        }
-    }
-
-    private boolean isInDepartment(Lecturer lecturer) {
-        for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i] == lecturer) return true;
         }
         return false;
     }
 
-    private void expandLecturers() {
-        Lecturer[] newArray = new Lecturer[lecturers.length * ARRAY_GROWTH];
-        System.arraycopy(lecturers, 0, newArray, 0, lecturers.length);
-        lecturers = newArray;
+    public Lecturer[] getLecturers() {
+        Lecturer[] copy = new Lecturer[lecturerCount];
+        for (int i = 0; i < lecturerCount; i++) copy[i] = lecturers[i];
+        return copy;
     }
 
-    public double averageSalary() {
-        if (lecturerCount == 0) return 0;
-        double sum = 0;
-        for (int i = 0; i < lecturerCount; i++) {
-            sum += lecturers[i].getSalary();
-        }
-        return sum / lecturerCount;
+    public int getLecturerCount() { return lecturerCount; }
+
+    @Override
+    public boolean equals(Object o) {
+        return this == o ||
+                (o instanceof Department && name.equals(((Department)o).name));
     }
+
+    @Override public int hashCode() { return Objects.hash(name); }
 
     @Override
     public String toString() {
-        return "Department: " + getName() + ", Students: " + studentCount + ", Lecturers: " + lecturerCount;
+        return capitalize(name)
+                + " (Students: " + numStudents
+                + ", Lecturers: " + lecturerCount
+                + ")";
     }
 
-    private String capitalize(String input) {
-        if (input == null || input.isEmpty()) return input;
-        return input.substring(0, 1).toUpperCase() + input.substring(1);
+    private static String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 }
