@@ -8,8 +8,9 @@ public class Department {
 
     private String name;
     private int numStudents;
-    private Lecturer[] lecturers;
+    private Lecturer[] lecturers; 
     private int lecturerCount;
+
 
     public Department(String name, int numStudents) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("Dept name empty");
