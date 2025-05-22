@@ -12,7 +12,7 @@ public class Main {
 
         while (true) {
             printMenu();
-            int choice = readInt("Choose an option (0–17): ", 0, 17);
+            int choice = readInt("Choose an option (0–19): ", 0, 19);
             System.out.println();
             switch (choice) {
                 case 0  -> { System.out.println("Goodbye!"); return; }
@@ -28,17 +28,19 @@ public class Main {
                 case 9  -> flowListAll(college.getLecturers());
                 case 10 -> flowListAll(college.getDepartments());
                 case 11 -> flowListAll(college.getCommittees());
+                case 12 -> flowAddLecturerToDepartment(college);
+                case 13 -> flowAddLecturerToCommittee(college);
                 case 14 -> flowCompareArticles(college);
                 case 15 -> flowCompareDepartments(college);
                 case 16 -> flowCloneCommittee(college);
                 case 17 -> flowRemoveCommitteeMember(college);
-                default -> System.out.println("Option not implemented or invalid.");
+                // (שמרנו 18 ו-19 פנויים לעתיד)
+                default -> System.out.println("⚠️ Option not implemented.");
             }
             System.out.println();
         }
     }
 
-    // — Flows —
     private static void flowAddLecturer(College c) {
         String name  = readNonEmpty("Lecturer name: ");
         int    id    = readInt("Lecturer ID (>0): ", 1, Integer.MAX_VALUE);
@@ -47,29 +49,42 @@ public class Main {
         String major = readNonEmpty("Major: ");
         double sal   = readDouble("Salary (>=0): ");
 
-        // Instantiate lecturer according to degree
         if ("DR".equals(deg) || "PROF".equals(deg)) {
-            // ResearchLecturer or Professor
-            ResearchLecturer rl;
+
+            int numArt = readInt("Number of articles: ", 0, Integer.MAX_VALUE);
+            String[] articles = new String[numArt];
+            for (int i = 1; i <= numArt; i++) {
+                articles[i-1] = readNonEmpty("Article " + i + " title: ");
+            }
+
             if ("PROF".equals(deg)) {
                 String body = readNonEmpty("Granting body: ");
-                rl = new Professor(name, id, Degree.PROF, major, sal, body);
+                Professor prof = new Professor(name, id, Degree.PROF, major, sal, body);
+
+                for (String title : articles) {
+                    prof.addArticle(title);
+                }
+                System.out.println(c.addLecturer(prof)
+                        ? "Professor added with articles."
+                        : "Already exists.");
             } else {
-                rl = new ResearchLecturer(name, id, Degree.DR, major, sal);
+                ResearchLecturer rl = new ResearchLecturer(name, id, Degree.DR, major, sal);
+                // הוספת המאמרים ל־ResearchLecturer
+                for (String title : articles) {
+                    rl.addArticle(title);
+                }
+                System.out.println(c.addLecturer(rl)
+                        ? "Research Lecturer added with articles."
+                        : "Already exists.");
             }
-            // Prompt for articles
-            int n = readInt("Number of articles: ", 0, Integer.MAX_VALUE);
-            for (int i = 1; i <= n; i++) {
-                String title = readNonEmpty("  Article " + i + " title: ");
-                rl.addArticle(title);
-            }
-            System.out.println(c.addLecturer(rl) ? "Lecturer added with articles." : "Already exists.");
         } else {
-            // Regular lecturer
             Lecturer l = new Lecturer(name, id, Degree.valueOf(deg), major, sal);
-            System.out.println(c.addLecturer(l) ? "Lecturer added." : "Already exists.");
+            System.out.println(c.addLecturer(l)
+                    ? "Lecturer added."
+                    : "Already exists.");
         }
     }
+
 
     private static void flowRemoveLecturer(College c) {
         String name = readNonEmpty("Lecturer name to remove: ");
@@ -119,10 +134,6 @@ public class Main {
         }
     }
 
-    private static void flowListAll(Object[] arr) {
-        for (Object o : arr) System.out.println(o);
-    }
-
     private static void flowCompareArticles(College c) {
         String n1 = readNonEmpty("First DR/Prof name: ");
         String n2 = readNonEmpty("Second DR/Prof name: ");
@@ -160,7 +171,42 @@ public class Main {
                 ? "Member removed." : "⚠️ That lecturer is not in committee.");
     }
 
-    // — Input Helpers —
+
+    private static void flowAddLecturerToDepartment(College c) {
+        String dn = readNonEmpty("Department name: ");
+        Department dept = c.findDepartmentByName(dn);
+        if (dept == null) {
+            System.out.println("⚠️ Department not found."); return;
+        }
+        String ln = readNonEmpty("Lecturer name: ");
+        Lecturer lec = c.findLecturerByName(ln);
+        if (lec == null) {
+            System.out.println("⚠️ Lecturer not found."); return;
+        }
+        boolean ok = dept.addLecturer(lec);
+        System.out.println(ok
+                ? "Lecturer added to department."
+                : "⚠️ Lecturer already in department.");
+    }
+
+    private static void flowAddLecturerToCommittee(College c) {
+        String cn = readNonEmpty("Committee name: ");
+        Committee cm = c.findCommitteeByName(cn);
+        if (cm == null) {
+            System.out.println("⚠️ Committee not found."); return;
+        }
+        String ln = readNonEmpty("Lecturer name: ");
+        Lecturer lec = c.findLecturerByName(ln);
+        if (lec == null) {
+            System.out.println("⚠️ Lecturer not found."); return;
+        }
+        boolean ok = cm.addMember(lec);
+        System.out.println(ok
+                ? "Lecturer added to committee."
+                : "⚠️ Lecturer already in committee.");
+    }
+
+
     private static String readNonEmpty(String prompt) {
         String s;
         do {
@@ -176,12 +222,20 @@ public class Main {
             System.out.print(prompt);
             try {
                 int v = Integer.parseInt(sc.nextLine().trim());
-                if (v < min || v > max)
-                    System.out.printf("⚠️ Enter a number between %d and %d.%n", min, max);
+                if (v < min || v > max) System.out.println("⚠️ Must be between " + min + "–" + max + ".");
                 else return v;
             } catch (NumberFormatException e) {
                 System.out.println("⚠️ Invalid integer, try again.");
             }
+        }
+    }
+
+    private static String readOption(String prompt, String[] opts) {
+        while (true) {
+            System.out.print(prompt);
+            String s = sc.nextLine().trim().toUpperCase();
+            for (String o : opts) if (o.equals(s)) return s;
+            System.out.println("⚠️ Invalid option, choose one of " + String.join(", ", opts) + ".");
         }
     }
 
@@ -197,17 +251,16 @@ public class Main {
             }
         }
     }
-
-    private static String readOption(String prompt, String[] opts) {
-        while (true) {
-            System.out.print(prompt);
-            String s = sc.nextLine().trim().toUpperCase();
-            for (String o : opts) if (o.equals(s)) return s;
-            System.out.print("⚠️ Please enter one of:");
-            for (String o : opts) System.out.print(" " + o);
-            System.out.println();
+    private static void flowListAll(Object[] items) {
+        if (items.length == 0) {
+            System.out.println("⚠️  אין פריטים להצגה.");
+            return;
+        }
+        for (Object item : items) {
+            System.out.println(item);
         }
     }
+
 
     private static void printMenu() {
         System.out.println("=== ACADEMIC MANAGER ===");
@@ -223,6 +276,8 @@ public class Main {
         System.out.println("9  – List all lecturers");
         System.out.println("10 – List all departments");
         System.out.println("11 – List all committees");
+        System.out.println("12 – Add lecturer to department");
+        System.out.println("13 – Add lecturer to committee");
         System.out.println("14 – Compare DR/Prof by # articles");
         System.out.println("15 – Compare two departments");
         System.out.println("16 – Clone committee");

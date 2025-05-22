@@ -197,4 +197,5 @@ public class College {
         for (Lecturer m : o.getMembers()) copy.addMember(m);
         return addCommittee(copy);
     }
-}
+
+    }

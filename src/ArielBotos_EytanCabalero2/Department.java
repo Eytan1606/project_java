@@ -8,7 +8,7 @@ public class Department {
 
     private String name;
     private int numStudents;
-    private Lecturer[] lecturers; 
+    private Lecturer[] lecturers;
     private int lecturerCount;
 
 
@@ -38,6 +38,7 @@ public class Department {
         return true;
     }
 
+
     public boolean removeLecturer(Lecturer l) {
         for (int i = 0; i < lecturerCount; i++) {
             if (lecturers[i].equals(l)) {
@@ -61,8 +62,10 @@ public class Department {
 
     @Override
     public boolean equals(Object o) {
-        return this == o ||
-                (o instanceof Department && name.equals(((Department)o).name));
+        if (this == o) return true;
+        if (!(o instanceof Department)) return false;
+        Department d = (Department) o;
+        return name.equals(d.name);
     }
 
     @Override public int hashCode() { return Objects.hash(name); }
@@ -78,5 +81,29 @@ public class Department {
     private static String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
         return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    public void addMember(Lecturer lec) {
+        if (lecturerCount == lecturers.length) {
+            Lecturer[] newArr = new Lecturer[lecturers.length * 2];
+            for (int i = 0; i < lecturers.length; i++) {
+                newArr[i] = lecturers[i];
+            }
+            lecturers = newArr;
+        }
+        lecturers[lecturerCount++] = lec;
+    }
+    public boolean removeMember(Lecturer lec) {
+        for (int i = 0; i < lecturerCount; i++) {
+            if (lecturers[i].equals(lec)) {
+                // shift left
+                for (int j = i; j < lecturerCount - 1; j++) {
+                    lecturers[j] = lecturers[j + 1];
+                }
+                lecturers[--lecturerCount] = null;
+                return true;
+            }
+        }
+        return false;
     }
 }

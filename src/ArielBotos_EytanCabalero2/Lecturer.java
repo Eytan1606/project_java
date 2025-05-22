@@ -1,4 +1,3 @@
-// Lecturer.java
 package ArielBotos_EytanCabalero2;
 
 import java.util.Objects;

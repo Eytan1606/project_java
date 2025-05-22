@@ -1,6 +1,3 @@
-
-
-
 package ArielBotos_EytanCabalero2;
 
 public class ResearchLecturer extends Lecturer {

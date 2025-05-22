@@ -1,4 +1,3 @@
-// Committee.java
 package ArielBotos_EytanCabalero2;
 
 import java.util.Objects;
@@ -59,6 +58,14 @@ public class Committee {
         Lecturer[] copy = new Lecturer[memberCount];
         for (int i = 0; i < memberCount; i++) copy[i] = members[i];
         return copy;
+    }
+    public boolean containsMember(Lecturer lec) {
+        for (int i = 0; i < memberCount; i++) {
+            if (members[i].equals(lec)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
