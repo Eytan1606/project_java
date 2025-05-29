@@ -167,7 +167,10 @@ public class College {
             return "Both must be DR or PROF.";
         int a1 = ((ResearchLecturer)l1).getArticleCount();
         int a2 = ((ResearchLecturer)l2).getArticleCount();
-        return String.format("%s has %d; %s has %d", l1.getName(), a1, l2.getName(), a2);
+        if (a1 == a2) return String.format("%s has %d; %s has %d", l1.getName(), a1, l2.getName(), a2);
+        if (a1 > a2) return String.format("%s has %d;" ,l1.getName(), a1);
+        else return String.format("%s has %d;" ,l2.getName(), a2);
+
     }
 
     public String compareDepartments(String d1, String d2, int crit) {

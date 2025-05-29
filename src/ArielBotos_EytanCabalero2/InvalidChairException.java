@@ -1,4 +1,3 @@
-// InvalidChairException.java
 package ArielBotos_EytanCabalero2;
 
 public class InvalidChairException extends RuntimeException {

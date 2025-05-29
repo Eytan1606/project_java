@@ -19,22 +19,22 @@ public class Main {
                 case 1  -> flowAddLecturer(college);
                 case 2  -> flowRemoveLecturer(college);
                 case 3  -> flowAddDepartment(college);
-                case 4  -> flowRemoveDepartment(college);
-                case 5  -> flowAddCommittee(college);
-                case 6  -> flowRemoveCommittee(college);
-                case 7  -> System.out.printf("Average salary: ₪%.2f%n",
+                case 4  -> flowAddCommittee(college);
+                case 5  -> flowRemoveCommittee(college);
+                case 6  -> System.out.printf("Average salary: ₪%.2f%n",
                         college.getAverageSalaryAllLecturers());
-                case 8  -> flowAverageByDepartment(college);
-                case 9  -> flowListAll(college.getLecturers());
-                case 10 -> flowListAll(college.getDepartments());
-                case 11 -> flowListAll(college.getCommittees());
-                case 12 -> flowAddLecturerToDepartment(college);
-                case 13 -> flowAddLecturerToCommittee(college);
-                case 14 -> flowCompareArticles(college);
-                case 15 -> flowCompareDepartments(college);
-                case 16 -> flowCloneCommittee(college);
-                case 17 -> flowRemoveCommitteeMember(college);
-                // (שמרנו 18 ו-19 פנויים לעתיד)
+                case 7  -> flowAverageByDepartment(college);
+                case 8  -> flowListAll(college.getLecturers());
+                case 9 -> flowListAll(college.getCommittees());
+                case 10 -> flowAddLecturerToDepartment(college);
+                case 11-> flowAddLecturerToCommittee(college);
+                case 12 -> flowCompareArticles(college);//
+                case 13 -> flowCompareDepartments(college);
+                case 14 -> {
+                    flowCloneCommittee(college);
+                }
+                case 15-> flowRemoveCommitteeMember(college);
+
                 default -> System.out.println("⚠️ Option not implemented.");
             }
             System.out.println();
@@ -42,6 +42,7 @@ public class Main {
     }
 
     private static void flowAddLecturer(College c) {
+        System.out.println("=== Add Lecturer ===");
         String name  = readNonEmpty("Lecturer name: ");
         int    id    = readInt("Lecturer ID (>0): ", 1, Integer.MAX_VALUE);
         String[] validDegrees = {"BA","MA","DR","PROF"};
@@ -92,18 +93,17 @@ public class Main {
     }
 
     private static void flowAddDepartment(College c) {
+        System.out.println("=== Add Department ===");
         String name = readNonEmpty("Department name: ");
         int ns = readInt("Number of students (>=0): ", 0, Integer.MAX_VALUE);
         Department d = new Department(name, ns);
         System.out.println(c.addDepartment(d) ? "Dept added." : "Already exists.");
     }
 
-    private static void flowRemoveDepartment(College c) {
-        String name = readNonEmpty("Department to remove: ");
-        System.out.println(c.removeDepartment(name) ? "Removed." : "Not found.");
-    }
+
 
     private static void flowAddCommittee(College c) {
+        System.out.println("=== Add Committee ===");
         String cn = readNonEmpty("Committee name: ");
         String ch = readNonEmpty("Chair name: ");
         Lecturer chair = c.findLecturerByName(ch);
@@ -253,7 +253,7 @@ public class Main {
     }
     private static void flowListAll(Object[] items) {
         if (items.length == 0) {
-            System.out.println("⚠️  אין פריטים להצגה.");
+            System.out.println("⚠️  " + "has no members.");
             return;
         }
         for (Object item : items) {
@@ -268,20 +268,18 @@ public class Main {
         System.out.println("1  – Add Lecturer");
         System.out.println("2  – Remove Lecturer");
         System.out.println("3  – Add Department");
-        System.out.println("4  – Remove Department");
-        System.out.println("5  – Add Committee");
-        System.out.println("6  – Remove Committee");
-        System.out.println("7  – Avg salary (all)");
-        System.out.println("8  – Avg salary by dept");
-        System.out.println("9  – List all lecturers");
-        System.out.println("10 – List all departments");
-        System.out.println("11 – List all committees");
-        System.out.println("12 – Add lecturer to department");
-        System.out.println("13 – Add lecturer to committee");
-        System.out.println("14 – Compare DR/Prof by # articles");
-        System.out.println("15 – Compare two departments");
-        System.out.println("16 – Clone committee");
-        System.out.println("17 – Remove committee member");
+        System.out.println("4  – Add Committee");
+        System.out.println("5  – Remove Committee");
+        System.out.println("6  – Avg salary (all)");
+        System.out.println("7  – Avg salary by dept");
+        System.out.println("8  – List all lecturers");
+        System.out.println("9 – List all committees");
+        System.out.println("10 – Add lecturer to department");
+        System.out.println("11 – Add lecturer to committee");
+        System.out.println("12 – Compare DR/Prof by # articles");
+        System.out.println("13 – Compare two departments");
+        System.out.println("14 – Clone committee");
+        System.out.println("15 – Remove committee member");
         System.out.print("> ");
     }
 }
