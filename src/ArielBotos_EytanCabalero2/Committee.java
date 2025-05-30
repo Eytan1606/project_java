@@ -2,13 +2,13 @@ package ArielBotos_EytanCabalero2;
 
 import java.util.Objects;
 
-public class Committee {
+public class Committee implements Comparable{
     private static final int GROW = 2;
 
-    private String name;
-    private Lecturer chair;
-    private Lecturer[] members;
-    private int memberCount;
+    public String name;
+    public Lecturer chair;
+    public Lecturer[] members;
+    public int memberCount;
 
     public Committee(String name, Lecturer chair) {
         if (name == null || name.isBlank()) throw new IllegalArgumentException("Name empty");
@@ -86,5 +86,49 @@ public class Committee {
     private static String capitalize(String s) {
         if (s == null || s.isEmpty()) return s;
         return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Committee other = (Committee) o;
+
+        // 1) Sum articles of chair + members
+        int sumThis = 0, sumOther = 0;
+        if (chair instanceof ResearchLecturer) {
+            sumThis += ((ResearchLecturer) chair).getArticleCount();
+        }
+        if (other.chair instanceof ResearchLecturer) {
+            sumOther += ((ResearchLecturer) other.chair).getArticleCount();
+        }
+        for (int i = 0; i < memberCount; i++) {
+            Lecturer m = members[i];
+            if (m instanceof ResearchLecturer) {
+                sumThis += ((ResearchLecturer) m).getArticleCount();
+            }
+        }
+        for (int i = 0; i < other.memberCount; i++) {
+            Lecturer m = other.members[i];
+            if (m instanceof ResearchLecturer) {
+                sumOther += ((ResearchLecturer) m).getArticleCount();
+            }
+        }
+
+
+        int diff = sumThis - sumOther;
+        if (diff != 0) {
+            return diff;
+        }
+
+        // 3) Secondary: compare total lecturers (chair + members)
+        int sizeThis  = 1 + memberCount;
+        int sizeOther = 1 + other.memberCount;
+        return sizeThis - sizeOther;
+    }
+    public int getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
     }
 }

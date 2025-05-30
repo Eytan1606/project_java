@@ -70,7 +70,7 @@ public class College {
         return sum / lecturerCount;
     }
 
-    // --- Departments ---
+
     public boolean addDepartment(Department d) {
         if (d == null) return false;
         for (Department ex : getDepartments())
@@ -84,17 +84,60 @@ public class College {
         return true;
     }
 
-    public boolean removeDepartment(String name) {
-        for (int i = 0; i < departmentCount; i++) {
-            if (departments[i].getName().equalsIgnoreCase(name)) {
-                for (int j = i; j < departmentCount - 1; j++)
-                    departments[j] = departments[j + 1];
-                departmentCount--;
-                return true;
+    public String compareCommittees(String name1, String name2) {
+        Committee c1 = findCommittee(name1);
+        Committee c2 = findCommittee(name2);
+        if (c1 == null || c2 == null) {
+            return "⚠️ One or both committees not found.";
+        }
+
+        int cmp = c1.compareTo(c2);
+        // tie
+        if (cmp == 0) {
+            return String.format(
+                    "Committees \"%s\" and \"%s\" are tied: %d articles, %d lecturers.",
+                    c1.getName(), c2.getName(),
+                    totalArticles(c1), 1 + c1.getMemberCount()
+            );
+        }
+
+
+        Committee winner    = (cmp > 0 ? c1 : c2);
+        Committee runnerUp  = (cmp > 0 ? c2 : c1);
+        return String.format(
+                "Committee \"%s\" leads over \"%s\": %d articles and %d lecturers vs %d articles and %d lecturers.",
+                winner.getName(),
+                runnerUp.getName(),
+                totalArticles(winner),
+                1 + winner.getMemberCount(),
+                totalArticles(runnerUp),
+                1 + runnerUp.getMemberCount()
+        );
+    }
+    private int totalArticles(Committee c) {
+        int sum = 0;
+        if (c.getChair() instanceof ResearchLecturer) {
+            sum += ((ResearchLecturer) c.getChair()).getArticleCount();
+        }
+        for (int i = 0; i < c.getMemberCount(); i++) {
+            Lecturer m = c.getMembers()[i];
+            if (m instanceof ResearchLecturer) {
+                sum += ((ResearchLecturer) m).getArticleCount();
             }
         }
-        return false;
+        return sum;
     }
+    private Committee findCommittee(String name) {
+        for (int i = 0; i < committeeCount; i++) {
+            if (committees[i].getName().equalsIgnoreCase(name)) {
+                return committees[i];
+            }
+        }
+        return null;
+    }
+
+
+
 
     public Department findDepartmentByName(String name) {
         for (Department d : getDepartments())

@@ -11,8 +11,8 @@ public class Main {
         College college  = new College(collegeName);
 
         while (true) {
-            printMenu();
-            int choice = readInt("Choose an option (0–19): ", 0, 19);
+            mainMenu();
+            int choice = readInt("Choose an option (0–15): ", 0, 19);
             System.out.println();
             switch (choice) {
                 case 0  -> { System.out.println("Goodbye!"); return; }
@@ -28,7 +28,7 @@ public class Main {
                 case 9 -> flowListAll(college.getCommittees());
                 case 10 -> flowAddLecturerToDepartment(college);
                 case 11-> flowAddLecturerToCommittee(college);
-                case 12 -> flowCompareArticles(college);//
+                case 12 -> flowCompareCommittees(college);
                 case 13 -> flowCompareDepartments(college);
                 case 14 -> {
                     flowCloneCommittee(college);
@@ -117,6 +117,11 @@ public class Main {
             System.out.println("Cannot create committee: " + e.getMessage());
         }
     }
+    private static void flowCompareCommittees(College college) {
+        String first = readNonEmpty("Enter first committee name: ");
+        String second = readNonEmpty("Enter second committee name: ");
+        System.out.println(college.compareCommittees(first, second));
+    }
 
     private static void flowRemoveCommittee(College c) {
         String name = readNonEmpty("Committee to remove: ");
@@ -132,12 +137,6 @@ public class Main {
             System.out.printf("Average in %s: ₪%.2f%n", d,
                     c.getAverageSalaryByDepartment(d));
         }
-    }
-
-    private static void flowCompareArticles(College c) {
-        String n1 = readNonEmpty("First DR/Prof name: ");
-        String n2 = readNonEmpty("Second DR/Prof name: ");
-        System.out.println(c.compareByArticles(n1, n2));
     }
 
     private static void flowCompareDepartments(College c) {
@@ -222,7 +221,8 @@ public class Main {
             System.out.print(prompt);
             try {
                 int v = Integer.parseInt(sc.nextLine().trim());
-                if (v < min || v > max) System.out.println("⚠️ Must be between " + min + "–" + max + ".");
+                int x = max -4;
+                if (v < min || v > max) System.out.println("⚠️ Must be between " + min + "–" + x + ".");
                 else return v;
             } catch (NumberFormatException e) {
                 System.out.println("⚠️ Invalid integer, try again.");
@@ -262,24 +262,29 @@ public class Main {
     }
 
 
-    private static void printMenu() {
-        System.out.println("=== ACADEMIC MANAGER ===");
-        System.out.println("0  – Exit");
-        System.out.println("1  – Add Lecturer");
-        System.out.println("2  – Remove Lecturer");
-        System.out.println("3  – Add Department");
-        System.out.println("4  – Add Committee");
-        System.out.println("5  – Remove Committee");
-        System.out.println("6  – Avg salary (all)");
-        System.out.println("7  – Avg salary by dept");
-        System.out.println("8  – List all lecturers");
-        System.out.println("9 – List all committees");
-        System.out.println("10 – Add lecturer to department");
-        System.out.println("11 – Add lecturer to committee");
-        System.out.println("12 – Compare DR/Prof by # articles");
-        System.out.println("13 – Compare two departments");
-        System.out.println("14 – Clone committee");
-        System.out.println("15 – Remove committee member");
-        System.out.print("> ");
+    private static final String[] MENU ={
+            "=== ACADEMIC MANAGER ===",
+            "0  - Exit",
+            "1  - Add Lecturer",
+            "2  - Remove Lecturer",
+            "3  - Add Department",
+            "4  - Add Committee",
+            "5  - Remove Committee",
+            "6  - Avg salary (all)",
+            "7  - Avg salary by dept",
+            "8  - List all lecturers",
+            "9 - List all committees",
+            "10 - Add lecturer to department",
+            "11 - Add lecturer to committee",
+            "12 - Compare two committees by articles and membersCount",
+            "13 - Compare two departments",
+            "14 - Clone committee",
+            "15 - Remove committee member",
+            "================================ "
+    };
+    public static void mainMenu() {
+        for (int i = 0; i < MENU.length; i++) {
+            System.out.println(MENU[i]);
+        }
     }
 }
