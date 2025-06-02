@@ -226,7 +226,7 @@ public class College {
 
     public void addCommittee(Committee c) {
         if (c == null) {
-            throw new IllegalArgumentException("Committee cannot be null");
+            throw new IllegalArgumentException("Committee cannot be null.");
         }
         for (int i = 0; i < committeeCount; i++) {
             if (committees[i].equals(c)) {
@@ -267,7 +267,7 @@ public class College {
 
     public void removeCommittee(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Committee name cannot be empty");
+            throw new IllegalArgumentException("Committee name cannot be empty.");
         }
         Committee toRemove = findCommitteeByName(name);
         if (toRemove == null) {
@@ -278,7 +278,7 @@ public class College {
 
     private void removeCommittee(Committee c) {
         if (c == null) {
-            throw new IllegalArgumentException("Committee cannot be null");
+            throw new IllegalArgumentException("Committee cannot be null.");
         }
         int idx = -1;
         for (int i = 0; i < committeeCount; i++) {

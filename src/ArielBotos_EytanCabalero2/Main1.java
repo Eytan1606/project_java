@@ -17,21 +17,21 @@ public class Main1 {
                 switch (choice) {
                     case 0  -> { System.out.println("Exiting. Bye!"); return; }
                     case 1  -> flowAddLecturer(college);
-                    case 2  -> flowRemoveLecturer(college);
-                    case 3  -> flowAddDepartment(college);
-                    case 4  -> flowAddCommittee(college);
-                    case 5  -> flowRemoveCommittee(college);
-                    case 6  -> System.out.printf("Average salary: ₪%.2f%n", college.getAverageSalaryAllLecturers());
-                    case 7  -> flowAverageByDepartment(college);
-                    case 8  -> flowListAll(college.getLecturers());
-                    case 9  -> flowListAll(college.getCommittees());
-                    case 10 -> flowAddLecturerToDepartment(college);
-                    case 11 -> flowAddLecturerToCommittee(college);
-                    case 12 -> flowCompareCommittees(college);
-                    case 13 -> flowCompareDepartments(college);
-                    case 14 -> flowCloneCommittee(college);
-                    case 15 -> flowRemoveCommitteeMember(college);
-                    default -> System.out.println("⚠️ Option not implemented.");
+                    case 2  -> flowAddDepartment(college);
+                    case 3  -> flowAddCommittee(college);
+                    case 4  -> flowRemoveCommittee(college);
+                    case 5 -> flowAddLecturerToDepartment(college);
+                    case 6 -> flowAddLecturerToCommittee(college);
+                    case 7  -> flowRemoveLecturer(college);
+                    case 8 -> flowRemoveCommitteeMember(college);
+                    case 9  -> System.out.printf("Average salary: ₪%.2f%n", college.getAverageSalaryAllLecturers());
+                    case 10  -> flowAverageByDepartment(college);
+                    case 11  -> flowListAll(college.getLecturers());
+                    case 12  -> flowListAll(college.getCommittees());
+                    case 13 -> flowCompareCommittees(college);
+                    case 14 -> flowCompareDepartments(college);
+                    case 15 -> flowCloneCommittee(college);
+                    default -> System.out.println("⚠ Option not implemented.");
                 }
             } catch (DuplicateLecturerException |
                      LecturerNotFoundException |
@@ -41,11 +41,34 @@ public class Main1 {
                      CommitteeNotFoundException |
                      AssignmentException |
                      InvalidOperationException ex) {
-                System.out.println("⚠️ Error: " + ex.getMessage());
+                System.out.println("⚠ Error: " + ex.getMessage());
             }
             System.out.println();
         }
     }
+
+    private static final String[] MENU = {
+            "--- ACADEMIC MANAGER ---",
+            "0  - Exit",
+            "1  - Add Lecturer",
+            "2  - Add Department",
+            "3  - Add Committee",
+            "4  - Remove Committee",
+            "5 - Assign Lecturer to Department",
+            "6 - Assign Lecturer to Committee",
+            "7  - Remove Lecturer from Department", // לא יודעת למה התכוונת כי היה רשום רק remove lecturer אבל המתודה עושה את זה ->>
+            "8 - Remove Lecturer from Committee",
+            "9  - Average salary (All Lecturers)",
+            "10  - Average salary by Department",
+            "11  - Display All Lecturers",
+            "12  - Display All Committees",
+            "13 - Compare two Committees", // ביקשו לתת אפשרות להשוואה לשני קריטריונים - כלומר אחרי שבוחרים 13 צריך עוד שאלה של על פי איזה קריטריון רוצים להשוות
+            // צריך להוסיף השוואה בין ד"ר לפרופסור על פי מספר המאמרים
+            "14 - Compare two Departments", // לא ביקשו להשוות
+            "15 - Clone Committee"
+            // אני פתאום חושבת על זה ואין בכלל אפשרות להסיר מרצה וועדה מcollege
+
+    };
 
     private static void flowAddLecturer(College c) {
         System.out.println("=== Add Lecturer ===");
@@ -132,7 +155,7 @@ public class Main1 {
 
     private static void flowListAll(Object[] items) {
         if (items.length == 0) {
-            System.out.println("⚠️  has no members.");
+            System.out.println("⚠ has no members.");
             return;
         }
         for (Object item : items) {
@@ -157,7 +180,7 @@ public class Main1 {
     }
 
     private static void flowCompareCommittees(College c) {
-        System.out.println("=== Compare Committees ===");
+        System.out.println("--- Compare Committees ---");
         String c1 = readNonEmpty("First committee: ");
         String c2 = readNonEmpty("Second committee: ");
         String result = c.compareCommittees(c1, c2);
@@ -165,7 +188,7 @@ public class Main1 {
     }
 
     private static void flowCompareDepartments(College c) {
-        System.out.println("=== Compare Departments ===");
+        System.out.println("--- Compare Departments ---");
         String d1 = readNonEmpty("First department: ");
         String d2 = readNonEmpty("Second department: ");
         int crit = readInt("Criterion (1=#lecturers, 2=#articles): ", 1, 2);
@@ -174,14 +197,14 @@ public class Main1 {
     }
 
     private static void flowCloneCommittee(College c) {
-        System.out.println("=== Clone Committee ===");
+        System.out.println("--- Clone Committee ---");
         String orig = readNonEmpty("Committee to clone: ");
         c.cloneCommittee(orig);
         System.out.println("Cloned successfully as '" + orig.trim() + "-new'.");
     }
 
     private static void flowRemoveCommitteeMember(College c) {
-        System.out.println("=== Remove Committee Member ===");
+        System.out.println("--- Remove Committee Member ---");
         String cn = readNonEmpty("Committee name: ");
         String ln = readNonEmpty("Lecturer name: ");
         Committee cm = c.findCommitteeByName(cn);
@@ -206,7 +229,7 @@ public class Main1 {
             System.out.print(prompt);
             String s = sc.nextLine().trim();
             if (!s.isEmpty()) return s;
-            System.out.println("⚠️ Cannot be empty, try again.");
+            System.out.println("⚠ Cannot be empty, try again.");
         }
     }
 
@@ -216,12 +239,12 @@ public class Main1 {
             try {
                 int v = Integer.parseInt(sc.nextLine().trim());
                 if (v < min || v > max) {
-                    System.out.println("⚠️ Must be between " + min + " and " + max + ".");
+                    System.out.println("⚠ Must be between " + min + " and " + max + ".");
                 } else {
                     return v;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("⚠️ Invalid number, try again.");
+                System.out.println("⚠ Invalid number, try again.");
             }
         }
     }
@@ -237,7 +260,7 @@ public class Main1 {
                     return v;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("⚠️ Invalid number, try again.");
+                System.out.println("⚠ Invalid number, try again.");
             }
         }
     }
@@ -251,30 +274,11 @@ public class Main1 {
                     return s;
                 }
             }
-            System.out.println("⚠️ Invalid option, choose one of " + String.join(", ", opts) + ".");
+            System.out.println("⚠ Invalid option, choose one of " + String.join(", ", opts) + ".");
         }
     }
 
-    private static final String[] MENU = {
-            "=== ACADEMIC MANAGER ===",
-            "0  - Exit",
-            "1  - Add Lecturer",
-            "2  - Remove Lecturer",
-            "3  - Add Department",
-            "4  - Add Committee",
-            "5  - Remove Committee",
-            "6  - Avg salary (all)",
-            "7  - Avg salary by dept",
-            "8  - List all lecturers",
-            "9  - List all committees",
-            "10 - Add lecturer to department",
-            "11 - Add lecturer to committee",
-            "12 - Compare two committees",
-            "13 - Compare two departments",
-            "14 - Clone committee",
-            "15 - Remove committee member",
-            "================================ "
-    };
+
 
     public static void mainMenu() {
         for (String line : MENU) {
