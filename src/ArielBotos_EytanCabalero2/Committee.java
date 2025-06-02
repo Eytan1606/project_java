@@ -69,7 +69,6 @@ public class Committee implements Comparable {
         if (l == null) {
             throw new IllegalArgumentException("Lecturer cannot be null");
         }
-        // בדיקה אם כבר חבר
         for (int i = 0; i < memberCount; i++) {
             if (members[i].equals(l)) {
                 return false;
@@ -116,18 +115,21 @@ public class Committee implements Comparable {
             throw new IllegalArgumentException("Cannot compare Committee with " + o.getClass());
         }
         Committee other = (Committee) o;
+
         int thisArticles = 0;
-        if (this.chair instanceof ResearchLecturer) {
-            thisArticles = ((ResearchLecturer) this.chair).getArticleCount();
+        if (this.chair instanceof Researcher) {
+            thisArticles = ((Researcher) this.chair).getArticleCount();
         }
         int otherArticles = 0;
-        if (other.chair instanceof ResearchLecturer) {
-            otherArticles = ((ResearchLecturer) other.chair).getArticleCount();
+        if (other.chair instanceof Researcher) {
+            otherArticles = ((Researcher) other.chair).getArticleCount();
         }
+
         int cmp = Integer.compare(thisArticles, otherArticles);
         if (cmp != 0) return cmp;
         return Integer.compare(this.getTotalSize(), other.getTotalSize());
     }
+
 
     @Override
     public boolean equals(Object o) {

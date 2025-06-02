@@ -32,13 +32,13 @@ public class College {
         this.committeeCount = 0;
     }
 
-    public boolean addLecturer(Lecturer l) {
+    public void addLecturer(Lecturer l) {
         if (l == null) {
             throw new IllegalArgumentException("Lecturer cannot be null");
         }
         for (int i = 0; i < lecturerCount; i++) {
             if (lecturers[i].equals(l)) {
-                return false;
+                throw new DuplicateLecturerException("Lecturer with ID " + l.getId() + " already exists.");
             }
         }
         if (lecturerCount == lecturers.length) {
@@ -47,7 +47,6 @@ public class College {
             lecturers = temp;
         }
         lecturers[lecturerCount++] = l;
-        return true;
     }
 
     public Lecturer findLecturerByName(String name) {
@@ -63,18 +62,18 @@ public class College {
         return null;
     }
 
-    public boolean removeLecturer(String name) {
+    public void removeLecturer(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Lecturer name cannot be empty");
         }
         Lecturer toRemove = findLecturerByName(name);
         if (toRemove == null) {
-            return false;
+            throw new LecturerNotFoundException("Lecturer '" + name.trim() + "' not found.");
         }
-        return removeLecturer(toRemove);
+        removeLecturer(toRemove);
     }
 
-    public boolean removeLecturer(Lecturer l) {
+    private void removeLecturer(Lecturer l) {
         if (l == null) {
             throw new IllegalArgumentException("Lecturer cannot be null");
         }
@@ -86,20 +85,20 @@ public class College {
             }
         }
         if (idx < 0) {
-            return false;
+            throw new LecturerNotFoundException("Lecturer with ID " + l.getId() + " not found.");
         }
-
         l.removeFromDepartment();
 
         Committee[] joined = l.getCommittees();
-        for (int i = 0; i < joined.length; i++) {
-            l.removeFromCommittee(joined[i]);
+        for (Committee c : joined) {
+            l.removeFromCommittee(c);
         }
 
         System.arraycopy(lecturers, idx + 1, lecturers, idx, lecturerCount - idx - 1);
         lecturers[--lecturerCount] = null;
-        return true;
     }
+
+
 
     public Lecturer[] getLecturers() {
         if (lecturerCount == 0) {
@@ -110,13 +109,52 @@ public class College {
         return copy;
     }
 
-    public boolean addDepartment(Department d) {
+    public void addLecturerToDepartment(String lecturerName, String deptName) {
+        Lecturer lec = findLecturerByName(lecturerName);
+        if (lec == null) {
+            throw new LecturerNotFoundException("Lecturer '" + lecturerName.trim() + "' not found.");
+        }
+        Department dept = findDepartmentByName(deptName);
+        if (dept == null) {
+            throw new DepartmentNotFoundException("Department '" + deptName.trim() + "' not found.");
+        }
+        boolean added = lec.assignToDepartment(dept);
+        if (!added) {
+            throw new AssignmentException(
+                    "Lecturer '" + lec.getName() +
+                            "' is already in department '" + dept.getName() + "'."
+            );
+        }
+    }
+
+    public void addLecturerToCommittee(String lecturerName, String committeeName) {
+        Committee c = findCommitteeByName(committeeName);
+        if (c == null) {
+            throw new CommitteeNotFoundException("Committee '" + committeeName.trim() + "' not found.");
+        }
+        Lecturer lec = findLecturerByName(lecturerName);
+        if (lec == null) {
+            throw new LecturerNotFoundException("Lecturer '" + lecturerName.trim() + "' not found.");
+        }
+        boolean added = c.addMember(lec);
+        if (!added) {
+            throw new AssignmentException(
+                    "Lecturer '" + lec.getName() +
+                            "' is already a member of committee '" + c.getName() + "'."
+            );
+        }
+    }
+
+
+
+
+    public void addDepartment(Department d) {
         if (d == null) {
             throw new IllegalArgumentException("Department cannot be null");
         }
         for (int i = 0; i < departmentCount; i++) {
             if (departments[i].equals(d)) {
-                return false;
+                throw new DuplicateDepartmentException("Department '" + d.getName() + "' already exists.");
             }
         }
         if (departmentCount == departments.length) {
@@ -125,7 +163,6 @@ public class College {
             departments = temp;
         }
         departments[departmentCount++] = d;
-        return true;
     }
 
 
@@ -153,18 +190,18 @@ public class College {
     }
 
 
-    public boolean removeDepartment(String name) {
+    public void removeDepartment(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Department name cannot be empty");
         }
         Department toRemove = findDepartmentByName(name);
         if (toRemove == null) {
-            return false;
+            throw new DepartmentNotFoundException("Department '" + name.trim() + "' not found.");
         }
-        return removeDepartment(toRemove);
+        removeDepartment(toRemove);
     }
 
-    public boolean removeDepartment(Department d) {
+    private void removeDepartment(Department d) {
         if (d == null) {
             throw new IllegalArgumentException("Department cannot be null");
         }
@@ -176,24 +213,24 @@ public class College {
             }
         }
         if (idx < 0) {
-            return false;
+            throw new DepartmentNotFoundException("Department '" + d.getName() + "' not found.");
         }
+
         Lecturer[] lects = d.getLecturers();
-        for (int i = 0; i < lects.length; i++) {
-            lects[i].removeFromDepartment();
+        for (Lecturer l : lects) {
+            l.removeFromDepartment();
         }
         System.arraycopy(departments, idx + 1, departments, idx, departmentCount - idx - 1);
         departments[--departmentCount] = null;
-        return true;
     }
 
-    public boolean addCommittee(Committee c) {
+    public void addCommittee(Committee c) {
         if (c == null) {
             throw new IllegalArgumentException("Committee cannot be null");
         }
         for (int i = 0; i < committeeCount; i++) {
             if (committees[i].equals(c)) {
-                return false;
+                throw new DuplicateCommitteeException("Committee '" + c.getName() + "' already exists.");
             }
         }
         if (committeeCount == committees.length) {
@@ -202,7 +239,6 @@ public class College {
             committees = temp;
         }
         committees[committeeCount++] = c;
-        return true;
     }
 
 
@@ -229,18 +265,18 @@ public class College {
         return null;
     }
 
-    public boolean removeCommittee(String name) {
+    public void removeCommittee(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Committee name cannot be empty");
         }
         Committee toRemove = findCommitteeByName(name);
         if (toRemove == null) {
-            return false;
+            throw new CommitteeNotFoundException("Committee '" + name.trim() + "' not found.");
         }
-        return removeCommittee(toRemove);
+        removeCommittee(toRemove);
     }
 
-    public boolean removeCommittee(Committee c) {
+    private void removeCommittee(Committee c) {
         if (c == null) {
             throw new IllegalArgumentException("Committee cannot be null");
         }
@@ -252,18 +288,17 @@ public class College {
             }
         }
         if (idx < 0) {
-            return false;
+            throw new CommitteeNotFoundException("Committee '" + c.getName() + "' not found.");
         }
         Lecturer[] members = c.getMembers();
-        for (int i = 0; i < members.length; i++) {
-            c.removeMember(members[i]);
+        for (Lecturer l : members) {
+            c.removeMember(l);
         }
         if (c.getChair() != null) {
             c.setChair(null);
         }
         System.arraycopy(committees, idx + 1, committees, idx, committeeCount - idx - 1);
         committees[--committeeCount] = null;
-        return true;
     }
 
     public double getAverageSalaryAllLecturers() {
@@ -298,11 +333,17 @@ public class College {
 
     public String compareCommittees(String name1, String name2) {
         Committee c1 = findCommitteeByName(name1);
-        Committee c2 = findCommitteeByName(name2);
-        if (c1 == null || c2 == null) {
-            return "⚠️ One or both committees not found.";
+        if (c1 == null) {
+            throw new CommitteeNotFoundException("Committee '" + name1.trim() + "' not found.");
         }
+
+        Committee c2 = findCommitteeByName(name2);
+        if (c2 == null) {
+            throw new CommitteeNotFoundException("Committee '" + name2.trim() + "' not found.");
+        }
+
         int cmp = c1.compareTo(c2);
+
         int articles1 = 0;
         if (c1.getChair() instanceof ResearchLecturer) {
             articles1 = ((ResearchLecturer) c1.getChair()).getArticleCount();
@@ -313,9 +354,10 @@ public class College {
         }
         int size1 = c1.getTotalSize();
         int size2 = c2.getTotalSize();
+
         if (cmp == 0) {
             return String.format(
-                    "Committees \"%s\" and \"%s\" are tied: %d articles, %d lecturers.",
+                    "Committees \"%s\" and \"%s\" are tied: %d articles, %d members.",
                     c1.getName(), c2.getName(), articles1, size1
             );
         } else if (cmp < 0) {
@@ -333,10 +375,14 @@ public class College {
 
     public String compareDepartments(String d1, String d2, int crit) {
         Department dept1 = findDepartmentByName(d1);
-        Department dept2 = findDepartmentByName(d2);
-        if (dept1 == null || dept2 == null) {
-            return "Dept not found.";
+        if (dept1 == null) {
+            throw new DepartmentNotFoundException("Department '" + d1.trim() + "' not found.");
         }
+        Department dept2 = findDepartmentByName(d2);
+        if (dept2 == null) {
+            throw new DepartmentNotFoundException("Department '" + d2.trim() + "' not found.");
+        }
+
         int v1 = (crit == 1) ? dept1.getLecturerCount() : sumArticles(dept1);
         int v2 = (crit == 1) ? dept2.getLecturerCount() : sumArticles(dept2);
         return String.format("%s: %d vs %s: %d", dept1.getName(), v1, dept2.getName(), v2);
@@ -353,20 +399,27 @@ public class College {
         return sum;
     }
 
-    public boolean cloneCommittee(String origName) {
+    public void cloneCommittee(String origName) {
         if (origName == null || origName.trim().isEmpty()) {
             throw new IllegalArgumentException("Original name cannot be empty");
         }
         Committee o = findCommitteeByName(origName);
         if (o == null) {
-            return false;
+            throw new CommitteeNotFoundException("Committee '" + origName.trim() + "' not found.");
         }
-        Committee copy = new Committee(origName + "-new", o.getChair());
+
+        String newName = origName.trim() + "-new";
+
+        if (findCommitteeByName(newName) != null) {
+            throw new DuplicateCommitteeException("Committee '" + newName + "' already exists.");
+        }
+
+        Committee copy = new Committee(newName, o.getChair());
         Lecturer[] mems = o.getMembers();
-        for (int i = 0; i < mems.length; i++) {
-            copy.addMember(mems[i]);
+        for (Lecturer l : mems) {
+            copy.addMember(l);
         }
-        return addCommittee(copy);
+        addCommittee(copy);
     }
 
 
