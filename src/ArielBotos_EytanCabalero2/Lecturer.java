@@ -2,112 +2,126 @@ package ArielBotos_EytanCabalero2;
 
 import java.util.Objects;
 
-public class Lecturer implements Comparable {
-    private static final int GROW = 2;
+public class Lecturer extends AbstractPerson {
+    private static final int GROW = 4;
 
-    private String name;
-    private int id;
-    private Degree degree;
-    private String major;
-    private double salary;
     private Department department;
     private Committee[] committees;
     private int committeeCount;
 
-    public Lecturer(String name, int id, Degree degree, String major, double salary) {
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("Name empty");
-        if (id <= 0)                  throw new IllegalArgumentException("ID must be >0");
-        if (salary < 0)               throw new IllegalArgumentException("Salary <0");
-        this.name = name.trim().toLowerCase();
-        this.id   = id;
-        this.degree = degree;
-        this.major  = major.trim().toLowerCase();
-        this.salary = salary;
+    public Lecturer(String name, int id, Degree degree, String major, double salary){
+        super(name, id, degree, major, salary);
         this.department = null;
-        this.committees = new Committee[2];
+        this.committees = new Committee[GROW];
         this.committeeCount = 0;
+
+    }
+    public Department getDepartment(){
+        return department;
     }
 
-    public String getName()     { return name; }
-    public int    getId()       { return id; }
-    public Degree getDegree()   { return degree; }
-    public String getMajor()    { return major; }
-    public double getSalary()   { return salary; }
-    public Department getDepartment() { return department; }
-    public Committee[] getCommittees() {
+    void setDepartment(Department department){
+        this.department = department;
+    }
+
+    public boolean assignToDepartment(Department d ){
+        if (d == null){
+            throw new IllegalArgumentException("Department cannot be null");
+        }
+        if (this.department == d){
+            return false;
+        }
+        if (this.department != null){
+            this.department.removeLecturer(this);
+        }
+        this.department = d;
+        return d.addLecturer(this);
+        }
+
+        public boolean removeFromDepartment(){
+        if (department == null) return false;
+        Department old = department;
+        department = null;
+        return old.removeLecturer(this);
+        }
+
+        public Committee[] getCommittees(){
+        if (committeeCount == 0){
+            return new Committee[0];
+        }
         Committee[] copy = new Committee[committeeCount];
-        for (int i = 0; i < committeeCount; i++) copy[i] = committees[i];
+        System.arraycopy(committees , 0 , copy ,0 , committeeCount);
         return copy;
-    }
-    public int getCommitteeCount() { return committeeCount; }
+        }
 
-    public void setDepartment(Department d) { this.department = d; }
-    public void removeDepartment()         { this.department = null; }
 
-    public boolean addCommittee(Committee c) {
-        if (c == null) return false;
-        for (int i = 0; i < committeeCount; i++)
-            if (committees[i].equals(c)) return false;
-        if (committeeCount == committees.length) expandCommittees();
-        committees[committeeCount++] = c;
-        return true;
-    }
-    public boolean removeCommittee(Committee c) {
-        for (int i = 0; i < committeeCount; i++) {
-            if (committees[i].equals(c)) {
-                // shift left
-                for (int j = i; j < committeeCount - 1; j++)
-                    committees[j] = committees[j + 1];
-                committeeCount--;
-                return true;
+        public boolean addToCommittee(Committee c){
+        if (c == null){
+            throw new IllegalArgumentException("Committee cannot be null");
+        }
+        for (int i =0; i <committeeCount; i++){
+            if  (committees[i].equals(c)){
+                return false;
             }
         }
-        return false;
-    }
-    private void expandCommittees() {
-        Committee[] larger = new Committee[committees.length * GROW];
-        for (int i = 0; i < committeeCount; i++) larger[i] = committees[i];
-        committees = larger;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return this == o ||
-                (o instanceof Lecturer && id == ((Lecturer)o).id);
-    }
-    @Override public int hashCode() { return Objects.hash(id); }
-
-    @Override
-    public String toString() {
-        String dept = department == null ? "None" : capitalize(department.getName());
-        StringBuilder sb = new StringBuilder();
-        sb.append(capitalize(name))
-                .append(" (ID ").append(id).append(") - ")
-                .append(degree).append(" - ")
-                .append(capitalize(major)).append(" - ₪")
-                .append(String.format("%.2f", salary))
-                .append(" - Dept: ").append(dept)
-                .append(" - Committees:");
-        if (committeeCount == 0) sb.append(" None");
-        else {
-            sb.append(" [");
-            for (int i = 0; i < committeeCount; i++) {
-                sb.append(capitalize(committees[i].getName()));
-                if (i < committeeCount - 1) sb.append(", ");
-            }
-            sb.append("]");
+        if (committeeCount == committees.length){
+            Committee[] temp = new Committee[committees.length * 2];
+            System.arraycopy(committees, 0 , temp, 0 ,committees.length);
+            committees = temp;
         }
-        return sb.toString();
+        committees[committeeCount ++] = c;
+        return c.addMember(this);
+        }
+
+
+        public  boolean removeFromCommittee(Committee c) {
+            if (c == null){
+                throw new IllegalArgumentException("Committee cannot be null");
+            }
+            int idx = -1;
+            for (int i =0; i <committeeCount; i++){
+                if (committees[i].equals(c)) {
+                    idx = i;
+                    break;
+                }
+            }
+            if (idx <0){
+                return false;
+            }
+            Committee removed = committees[idx];
+            System.arraycopy(committees, idx +1 , committees, idx, committeeCount - idx - 1);
+            committees[--committeeCount] = null;
+            return removed.removeMember(this);
+        }
+
+        @Override
+        public boolean equals(Object o){
+            return super.equals(o);
+        }
+
+        @Override
+        public int hashCode(){
+            return super.hashCode();
+        }
+
+        @Override
+        public String toString() {
+           String deptName = (department == null) ? "NoDept" : department.getName();
+           StringBuilder sb = new StringBuilder();
+           sb.append(super.toString())
+                .append(" → Dept: ")
+                .append(deptName)
+                .append(" , Committees: [");
+           Committee[] arr = getCommittees();
+           for (int i = 0; i < arr.length; i++) {
+              sb.append(arr[i].getName());
+               if (i < arr.length - 1) sb.append(", ");
+        }
+           sb.append("]");
+           return sb.toString();
     }
 
-    @Override
-    public int compareTo(Object o) {
-        Lecturer other = (Lecturer)o;
-        return Integer.compare(id, other.id);
-    }
 
-    private static String capitalize(String s) {
-        if (s == null || s.isEmpty()) return s;
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
-    }
 }
+
+

@@ -19,6 +19,6 @@ public class Professor extends ResearchLecturer {
 
     @Override
     public String toString() {
-        return super.toString() + " - Granted by: " + grantingBody;
+        return String.format("%s , Articles: %d", super.toString(), getArticleCount());
     }
 }

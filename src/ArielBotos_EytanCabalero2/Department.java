@@ -4,106 +4,115 @@ package ArielBotos_EytanCabalero2;
 import java.util.Objects;
 
 public class Department {
-    private static final int GROW = 2;
-
     private String name;
     private int numStudents;
     private Lecturer[] lecturers;
     private int lecturerCount;
-
+    private static final int INITIAL_SIZE = 4;
 
     public Department(String name, int numStudents) {
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("Dept name empty");
-        if (numStudents < 0)            throw new IllegalArgumentException("Students <0");
-        this.name = name.trim().toLowerCase();
+        if (name == null || name.trim().isEmpty())
+            throw new IllegalArgumentException("Department name cannot be empty");
+        if (numStudents < 0)
+            throw new IllegalArgumentException("Number of students cannot be negative");
+
+        this.name = name.trim();
         this.numStudents = numStudents;
-        this.lecturers = new Lecturer[2];
+        this.lecturers = new Lecturer[INITIAL_SIZE];
         this.lecturerCount = 0;
     }
 
-    public String getName() { return name; }
-    public int getNumStudents() { return numStudents; }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty())
+            throw new IllegalArgumentException("Department name cannot be empty");
+        this.name = name.trim();
+    }
+
+    public int getNumStudents() {
+        return numStudents;
+    }
+
+    public void setNumStudents(int numStudents) {
+        if (numStudents < 0)
+            throw new IllegalArgumentException("Number of students cannot be negative");
+        this.numStudents = numStudents;
+    }
+
+
+    public Lecturer[] getLecturers() {
+        if (lecturerCount == 0) {
+            return new Lecturer[0];
+        }
+        Lecturer[] copy = new Lecturer[lecturerCount];
+        System.arraycopy(lecturers, 0, copy, 0, lecturerCount);
+        return copy;
+    }
+
 
     public boolean addLecturer(Lecturer l) {
-        if (l == null) return false;
-        for (int i = 0; i < lecturerCount; i++)
-            if (lecturers[i].equals(l)) return false;
+        if (l == null) {
+            throw new IllegalArgumentException("Lecturer cannot be null");
+        }
+        for (int i = 0; i < lecturerCount; i++) {
+            if (lecturers[i].equals(l)) {
+                return false;
+            }
+        }
         if (lecturerCount == lecturers.length) {
-            Lecturer[] larger = new Lecturer[lecturers.length * GROW];
-            for (int i = 0; i < lecturerCount; i++) larger[i] = lecturers[i];
-            lecturers = larger;
+            Lecturer[] temp = new Lecturer[lecturers.length * 2];
+            System.arraycopy(lecturers, 0, temp, 0, lecturers.length);
+            lecturers = temp;
         }
         lecturers[lecturerCount++] = l;
         l.setDepartment(this);
         return true;
     }
 
-
     public boolean removeLecturer(Lecturer l) {
+        if (l == null) {
+            throw new IllegalArgumentException("Lecturer cannot be null");
+        }
+        int idx = -1;
         for (int i = 0; i < lecturerCount; i++) {
             if (lecturers[i].equals(l)) {
-                for (int j = i; j < lecturerCount - 1; j++)
-                    lecturers[j] = lecturers[j + 1];
-                lecturerCount--;
-                l.removeDepartment();
-                return true;
+                idx = i;
+                break;
             }
         }
-        return false;
+        if (idx < 0) {
+            return false;
+        }
+        Lecturer removed = lecturers[idx];
+        System.arraycopy(lecturers, idx + 1, lecturers, idx, lecturerCount - idx - 1);
+        lecturers[--lecturerCount] = null;
+        removed.setDepartment(null);
+        return true;
     }
-
-    public Lecturer[] getLecturers() {
-        Lecturer[] copy = new Lecturer[lecturerCount];
-        for (int i = 0; i < lecturerCount; i++) copy[i] = lecturers[i];
-        return copy;
-    }
-
-    public int getLecturerCount() { return lecturerCount; }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Department)) return false;
-        Department d = (Department) o;
-        return name.equals(d.name);
+        Department other = (Department) o;
+        return this.name.equalsIgnoreCase(other.name);
     }
 
-    @Override public int hashCode() { return Objects.hash(name); }
+    @Override
+    public int hashCode() {
+        return Objects.hash(name.toLowerCase());
+    }
 
     @Override
     public String toString() {
-        return capitalize(name)
-                + " (Students: " + numStudents
-                + ", Lecturers: " + lecturerCount
-                + ")";
+        return String.format("Department: %s (Students:%d)  LecturersCount:%d",
+                name, numStudents, lecturerCount);
     }
 
-    private static String capitalize(String s) {
-        if (s == null || s.isEmpty()) return s;
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
-    }
-
-    public void addMember(Lecturer lec) {
-        if (lecturerCount == lecturers.length) {
-            Lecturer[] newArr = new Lecturer[lecturers.length * 2];
-            for (int i = 0; i < lecturers.length; i++) {
-                newArr[i] = lecturers[i];
-            }
-            lecturers = newArr;
-        }
-        lecturers[lecturerCount++] = lec;
-    }
-    public boolean removeMember(Lecturer lec) {
-        for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i].equals(lec)) {
-                // shift left
-                for (int j = i; j < lecturerCount - 1; j++) {
-                    lecturers[j] = lecturers[j + 1];
-                }
-                lecturers[--lecturerCount] = null;
-                return true;
-            }
-        }
-        return false;
+    public int getLecturerCount() {
+        return lecturerCount;
     }
 }

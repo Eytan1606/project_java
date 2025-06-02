@@ -2,15 +2,27 @@
 package ArielBotos_EytanCabalero2;
 
 public enum Degree {
-    BA, MA, DR, PROF;
+    BA(false) ,
+    MA(false),
+    DR(true),
+    PROF(true);
 
-    public boolean canBeChair() {
-        return this == DR || this == PROF;
+    private final boolean canBeChair;
+
+    Degree(boolean canBeChair){
+        this.canBeChair = canBeChair;
+    }
+    public boolean canBeChair(){
+        return canBeChair;
     }
 
-    public static boolean isValid(String s) {
-        for (Degree d : values())
-            if (d.name().equalsIgnoreCase(s)) return true;
+    public static boolean isValid(String s){
+        if (s == null) return false;
+        for (Degree d : values()){
+            if  (d.name().equalsIgnoreCase(s.trim())){
+                return true;
+            }
+        }
         return false;
     }
 }
