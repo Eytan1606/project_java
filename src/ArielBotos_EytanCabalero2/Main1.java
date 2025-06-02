@@ -28,8 +28,8 @@ public class Main1 {
                     case 10 -> flowAverageByDepartment(college);
                     case 11 -> flowListAll(college.getLecturers());
                     case 12 -> flowListAll(college.getCommittees());
-                    case 13 -> flowCompareCommittees(college);
-                    case 14 -> flowCompareDepartments(college);
+                    case 13 -> flowCompareCommitteesNew(college);
+                    case 14 -> flowCompareProfessorsByArticles(college);
                     case 15 -> flowCloneCommittee(college);
                     default -> System.out.println("⚠ Option not implemented.");
                 }
@@ -63,9 +63,9 @@ public class Main1 {
             10 - Average salary by Department
             11 - Display All Lecturers
             12 - Display All Committees
-            13 - Compare two Committees // ביקשו לתת אפשרות להשוואה לשני קריטריונים - כלומר אחרי שבוחרים 13 צריך עוד שאלה של על פי איזה קריטריון רוצים להשוות
+            13 - Compare two Committees(by memberCount or articleCount) // ביקשו לתת אפשרות להשוואה לשני קריטריונים - כלומר אחרי שבוחרים 13 צריך עוד שאלה של על פי איזה קריטריון רוצים להשוות
             // צריך להוסיף השוואה בין ד"ר לפרופסור על פי מספר המאמרים
-            14 - Compare two Departments // לא ביקשו להשוות
+            14 - Compare two professors // לא ביקשו להשוות
             15 - Clone Committee\s""";
             // אני פתאום חושבת על זה ואין בכלל אפשרות להסיר מרצה וועדה מcollege
 
@@ -178,21 +178,110 @@ public class Main1 {
         System.out.println("Lecturer added to Committee successfully.");
     }
 
-    private static void flowCompareCommittees(College c) {
-        System.out.println("--- Compare Committees ---");
-        String c1 = readNonEmpty("First committee: ", "Committee name");
-        String c2 = readNonEmpty("Second committee: ", "Committee name");
-        String result = c.compareCommittees(c1, c2);
-        System.out.println(result);
+    private static void flowCompareCommitteesNew(College c) {
+        System.out.println("--- Compare Committees (choose criterion) ---");
+
+        String name1 = readNonEmpty("First Committee name: ", "Committee name");
+        Committee com1 = c.findCommitteeByName(name1);
+        if (com1 == null) {
+            System.out.printf("⚠ Committee \"%s\" not found.%n", name1);
+            return;
+        }
+
+        String name2 = readNonEmpty("Second Committee name: ", "Committee name");
+        Committee com2 = c.findCommitteeByName(name2);
+        if (com2 == null) {
+            System.out.printf("⚠ Committee \"%s\" not found.%n", name2);
+            return;
+        }
+
+        System.out.println("Choose comparison criterion:");
+        System.out.println("  1. Number of Articles (chair only)");
+        System.out.println("  2. Number of Members (excluding chair)");
+        int criterion = readInt("Enter 1 or 2: ", 1, 2);
+
+        if (criterion == 1) {
+
+            int articles1 = 0;
+            if (com1.getChair() instanceof Researcher) {
+                articles1 = ((Researcher) com1.getChair()).getArticleCount();
+            }
+            int articles2 = 0;
+            if (com2.getChair() instanceof Researcher) {
+                articles2 = ((Researcher) com2.getChair()).getArticleCount();
+            }
+            System.out.printf("» \"%s\" chair has %d article(s).%n", name1, articles1);
+            System.out.printf("» \"%s\" chair has %d article(s).%n", name2, articles2);
+
+            if (articles1 == articles2) {
+                System.out.printf("Result: Tie – both chairs have %d article(s).%n", articles1);
+            } else if (articles1 > articles2) {
+                System.out.printf("Result: \"%s\" wins with %d vs %d articles.%n",
+                        name1, articles1, articles2);
+            } else {
+                System.out.printf("Result: \"%s\" wins with %d vs %d articles.%n",
+                        name2, articles2, articles1);
+            }
+
+        } else { // criterion == 2
+            // מספר חברים בכל ועדה (מתודה getMembers מחזירה רק החברים, לא כולל היושב ראש)
+            int membersCount1 = com1.getMembers().length;
+            int membersCount2 = com2.getMembers().length;
+            System.out.printf("» \"%s\" has %d member(s).%n", name1, membersCount1);
+            System.out.printf("» \"%s\" has %d member(s).%n", name2, membersCount2);
+
+            if (membersCount1 == membersCount2) {
+                System.out.printf("Result: Tie – both have %d member(s).%n", membersCount1);
+            } else if (membersCount1 > membersCount2) {
+                System.out.printf("Result: \"%s\" wins with %d vs %d members.%n",
+                        name1, membersCount1, membersCount2);
+            } else {
+                System.out.printf("Result: \"%s\" wins with %d vs %d members.%n",
+                        name2, membersCount2, membersCount1);
+            }
+        }
     }
 
-    private static void flowCompareDepartments(College c) {
-        System.out.println("--- Compare Departments ---");
-        String d1 = readNonEmpty("First department: ", "Department name");
-        String d2 = readNonEmpty("Second department: ", "Department name");
-        int crit = readInt("Criterion (1=#lecturers, 2=#articles): ", 1, 2);
-        String result = c.compareDepartments(d1, d2, crit);
-        System.out.println(result);
+    private static void flowCompareProfessorsByArticles(College c) {
+        System.out.println("--- Compare Professors by Number of Articles ---");
+
+        String name1 = readNonEmpty("First Professor/ResearchLecturer name: ", "Lecturer name");
+        Lecturer lec1 = c.findLecturerByName(name1);
+        if (lec1 == null) {
+            System.out.printf("⚠ Lecturer \"%s\" not found.%n", name1);
+            return;
+        }
+        if (!(lec1 instanceof Researcher)) {
+            System.out.printf("⚠ Lecturer \"%s\" is not a researcher/Professor.%n", name1);
+            return;
+        }
+
+        String name2 = readNonEmpty("Second Professor/ResearchLecturer name: ", "Lecturer name");
+        Lecturer lec2 = c.findLecturerByName(name2);
+        if (lec2 == null) {
+            System.out.printf("⚠ Lecturer \"%s\" not found.%n", name2);
+            return;
+        }
+        if (!(lec2 instanceof Researcher)) {
+            System.out.printf("⚠ Lecturer \"%s\" is not a researcher/Professor.%n", name2);
+            return;
+        }
+
+        Researcher r1 = (Researcher) lec1;
+        Researcher r2 = (Researcher) lec2;
+        int count1 = r1.getArticleCount();
+        int count2 = r2.getArticleCount();
+
+        System.out.printf("» %s has %d article(s).%n", name1, count1);
+        System.out.printf("» %s has %d article(s).%n", name2, count2);
+
+        if (count1 == count2) {
+            System.out.printf("Result: Tie – both have %d article(s).%n", count1);
+        } else if (count1 > count2) {
+            System.out.printf("Result: \"%s\" wins with %d vs %d articles.%n", name1, count1, count2);
+        } else {
+            System.out.printf("Result: \"%s\" wins with %d vs %d articles.%n", name2, count2, count1);
+        }
     }
 
     private static void flowCloneCommittee(College c) {
