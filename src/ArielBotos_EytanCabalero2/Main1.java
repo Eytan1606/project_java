@@ -113,7 +113,7 @@ public class Main1 {
         System.out.println("--- Remove Lecturer from Department ---");
         String name = readNonEmpty("Lecturer name to remove: ", "Lecturer name");
         c.removeLecturer(name);
-        System.out.println("Lecturer removed.");
+        System.out.println("Lecturer removed successfully.");
     }
 
     private static void flowAddDepartment(College c) {
@@ -122,7 +122,7 @@ public class Main1 {
         int ns = readInt("Number of students (>=0): ", 0, Integer.MAX_VALUE);
         Department d = new Department(name, ns);
         c.addDepartment(d);
-        System.out.println("Dept added.");
+        System.out.println("Department added successfully.");
     }
 
     private static void flowAddCommittee(College c) {
@@ -135,14 +135,14 @@ public class Main1 {
         }
         Committee com = new Committee(cn.trim(), chair);
         c.addCommittee(com);
-        System.out.println("Committee added.");
+        System.out.println("Committee added successfully.");
     }
 
     private static void flowRemoveCommittee(College c) {
         System.out.println("--- Remove Committee ---");
         String name = readNonEmpty("Committee to remove: ", "Committee name");
         c.removeCommittee(name);
-        System.out.println("Committee removed.");
+        System.out.println("Committee removed successfully.");
     }
 
     private static void flowAverageByDepartment(College c) {
@@ -167,7 +167,7 @@ public class Main1 {
         String ln = readNonEmpty("Lecturer name: ", "Lecturer name");
         String dn = readNonEmpty("Department name: ", "Department name");
         c.addLecturerToDepartment(ln, dn);
-        System.out.println("Lecturer added to department.");
+        System.out.println("Lecturer added to Department successfully.");
     }
 
     private static void flowAddLecturerToCommittee(College c) {
@@ -175,7 +175,7 @@ public class Main1 {
         String cn = readNonEmpty("Committee name: ", "Committee name");
         String ln = readNonEmpty("Lecturer name: ", "Lecturer name");
         c.addLecturerToCommittee(ln, cn);
-        System.out.println("Lecturer added to committee.");
+        System.out.println("Lecturer added to Committee successfully.");
     }
 
     private static void flowCompareCommittees(College c) {
@@ -217,10 +217,10 @@ public class Main1 {
         boolean removed = cm.removeMember(lec);
         if (!removed) {
             throw new AssignmentException(
-                    "Lecturer '" + ln.trim() + "' is not a member of committee '" + cm.getName() + "'."
+                    "Lecturer '" + ln.trim() + "' is not a member of Committee '" + cm.getName() + "'."
             );
         }
-        System.out.println("Lecturer removed from committee.");
+        System.out.println("Lecturer removed from committee successfully.");
     }
 
     private static String readNonEmpty(String prompt, String fieldName) {
@@ -243,7 +243,7 @@ public class Main1 {
                     return v;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("⚠ Invalid number, try again.");
+                System.out.println("⚠ Invalid number, please try again.");
             }
         }
     }
@@ -259,7 +259,7 @@ public class Main1 {
                     return v;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("⚠ Invalid number, try again.");
+                System.out.println("⚠ Invalid number, please try again.");
             }
         }
     }
