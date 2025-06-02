@@ -5,7 +5,7 @@ import java.util.Objects;
 public class College {
     private static final int GROW = 2;
 
-    private String collegeName;
+    private final String collegeName;
 
 
     private Lecturer[] lecturers;

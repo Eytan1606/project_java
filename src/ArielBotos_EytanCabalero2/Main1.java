@@ -11,7 +11,7 @@ public class Main1 {
 
         while (true) {
             mainMenu();
-            int choice = readInt("\nChoose an option (0–15): ", 0, 19); // למה 19??
+            int choice = readInt("\nChoose an option (0–15): ", 0, 15);
             System.out.println();
             try {
                 switch (choice) {
@@ -20,14 +20,14 @@ public class Main1 {
                     case 2  -> flowAddDepartment(college);
                     case 3  -> flowAddCommittee(college);
                     case 4  -> flowRemoveCommittee(college);
-                    case 5 -> flowAddLecturerToDepartment(college);
-                    case 6 -> flowAddLecturerToCommittee(college);
+                    case 5  -> flowAddLecturerToDepartment(college);
+                    case 6  -> flowAddLecturerToCommittee(college);
                     case 7  -> flowRemoveLecturer(college);
-                    case 8 -> flowRemoveCommitteeMember(college);
+                    case 8  -> flowRemoveCommitteeMember(college);
                     case 9  -> System.out.printf("Average salary: ₪%.2f%n", college.getAverageSalaryAllLecturers());
-                    case 10  -> flowAverageByDepartment(college);
-                    case 11  -> flowListAll(college.getLecturers());
-                    case 12  -> flowListAll(college.getCommittees());
+                    case 10 -> flowAverageByDepartment(college);
+                    case 11 -> flowListAll(college.getLecturers());
+                    case 12 -> flowListAll(college.getCommittees());
                     case 13 -> flowCompareCommittees(college);
                     case 14 -> flowCompareDepartments(college);
                     case 15 -> flowCloneCommittee(college);
@@ -56,7 +56,7 @@ public class Main1 {
             3  - Add Committee
             4  - Remove Committee
             5  - Assign Lecturer to Department
-            6  - Assign Lecturer to Committee",
+            6  - Assign Lecturer to Committee
             7  - Remove Lecturer from Department // לא יודעת למה התכוונת כי היה רשום רק remove lecturer אבל המתודה עושה את זה ->>
             8  - Remove Lecturer from Committee
             9  - Average salary (All Lecturers)
