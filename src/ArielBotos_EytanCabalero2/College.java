@@ -21,7 +21,7 @@ public class College {
 
     public College(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("College name cannot be empty");
+            throw new NullInputException();
         }
         this.collegeName    = name.trim();
         this.lecturers      = new Lecturer[2];

@@ -220,16 +220,18 @@ public class Main1 {
                     "Lecturer '" + ln.trim() + "' is not a member of Committee '" + cm.getName() + "'."
             );
         }
-        System.out.println("Lecturer removed from committee successfully.");
+        System.out.println("Lecturer removed from Committee successfully.");
     }
 
-    private static String readNonEmpty(String prompt, String fieldName) {
-        System.out.print(prompt);
-        String s = sc.nextLine().trim();
-        if (s.isEmpty()) {
-            throw new NullInputException(fieldName);
+    public static String readNonEmpty(String prompt, String label) {
+        while (true) {
+            System.out.print(prompt);
+            String input = sc.nextLine().trim();
+            if (!input.isEmpty()) {
+                return input;
+            }
+            System.out.println(label + " cannot be empty, please try again.");
         }
-        return s;
     }
 
     private static int readInt(String prompt, int min, int max) {
