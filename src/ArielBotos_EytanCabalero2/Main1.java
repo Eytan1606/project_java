@@ -6,12 +6,12 @@ public class Main1 {
     private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
-        String collegeName = readNonEmpty("Enter college name: ");
+        String collegeName = readNonEmpty("Enter college name: ", "College name");
         College college  = new College(collegeName);
 
         while (true) {
             mainMenu();
-            int choice = readInt("Choose an option (0–15): ", 0, 19);
+            int choice = readInt("\nChoose an option (0–15): ", 0, 19); // למה 19??
             System.out.println();
             try {
                 switch (choice) {
@@ -33,7 +33,8 @@ public class Main1 {
                     case 15 -> flowCloneCommittee(college);
                     default -> System.out.println("⚠ Option not implemented.");
                 }
-            } catch (DuplicateLecturerException |
+            } catch (NullInputException |
+                     DuplicateLecturerException |
                      LecturerNotFoundException |
                      DuplicateDepartmentException |
                      DepartmentNotFoundException |
@@ -47,53 +48,51 @@ public class Main1 {
         }
     }
 
-    private static final String[] MENU = {
-            "--- ACADEMIC MANAGER ---",
-            "0  - Exit",
-            "1  - Add Lecturer",
-            "2  - Add Department",
-            "3  - Add Committee",
-            "4  - Remove Committee",
-            "5 - Assign Lecturer to Department",
-            "6 - Assign Lecturer to Committee",
-            "7  - Remove Lecturer from Department", // לא יודעת למה התכוונת כי היה רשום רק remove lecturer אבל המתודה עושה את זה ->>
-            "8 - Remove Lecturer from Committee",
-            "9  - Average salary (All Lecturers)",
-            "10  - Average salary by Department",
-            "11  - Display All Lecturers",
-            "12  - Display All Committees",
-            "13 - Compare two Committees", // ביקשו לתת אפשרות להשוואה לשני קריטריונים - כלומר אחרי שבוחרים 13 צריך עוד שאלה של על פי איזה קריטריון רוצים להשוות
+    private static final String MENU = """
+            \n--- ACADEMIC MANAGER ---
+            0  - Exit
+            1  - Add Lecturer
+            2  - Add Department
+            3  - Add Committee
+            4  - Remove Committee
+            5  - Assign Lecturer to Department
+            6  - Assign Lecturer to Committee",
+            7  - Remove Lecturer from Department // לא יודעת למה התכוונת כי היה רשום רק remove lecturer אבל המתודה עושה את זה ->>
+            8  - Remove Lecturer from Committee
+            9  - Average salary (All Lecturers)
+            10 - Average salary by Department
+            11 - Display All Lecturers
+            12 - Display All Committees
+            13 - Compare two Committees // ביקשו לתת אפשרות להשוואה לשני קריטריונים - כלומר אחרי שבוחרים 13 צריך עוד שאלה של על פי איזה קריטריון רוצים להשוות
             // צריך להוסיף השוואה בין ד"ר לפרופסור על פי מספר המאמרים
-            "14 - Compare two Departments", // לא ביקשו להשוות
-            "15 - Clone Committee"
+            14 - Compare two Departments // לא ביקשו להשוות
+            15 - Clone Committee\s""";
             // אני פתאום חושבת על זה ואין בכלל אפשרות להסיר מרצה וועדה מcollege
 
-    };
-
     private static void flowAddLecturer(College c) {
-        System.out.println("=== Add Lecturer ===");
-        String name  = readNonEmpty("Lecturer name: ");
+        System.out.println("--- Add Lecturer ---");
+        String name  = readNonEmpty("Lecturer name: ", "Lecturer name");
         int    id    = readInt("Lecturer ID (>0): ", 1, Integer.MAX_VALUE);
         String[] validDegrees = { "BA", "MA", "DR", "PROF" };
         String deg = readOption("Degree [BA, MA, DR, PROF]: ", validDegrees);
-        String major = readNonEmpty("Major: ");
+        String major = readNonEmpty("Major: ", "Major");
         double sal   = readDouble("Salary (>=0): ");
 
         if ("DR".equalsIgnoreCase(deg) || "PROF".equalsIgnoreCase(deg)) {
             int numArt = readInt("Number of articles: ", 0, Integer.MAX_VALUE);
             String[] articles = new String[numArt];
             for (int i = 1; i <= numArt; i++) {
-                articles[i - 1] = readNonEmpty("Article " + i + " title: ");
+                articles[i - 1] = readNonEmpty("Article " + i + " title: ", "Article " + i + " title");
             }
 
             if ("PROF".equalsIgnoreCase(deg)) {
-                String body = readNonEmpty("Granting body: ");
+                String body = readNonEmpty("Granting body: ", "Granting body");
                 Professor prof = new Professor(name, id, Degree.PROF, major, sal, body);
                 for (String art : articles) {
                     prof.addArticle(art);
                 }
                 c.addLecturer(prof);
-                System.out.println("Lecturer added.");
+                System.out.println("Lecturer added successfully.");
                 return;
             }
 
@@ -102,24 +101,24 @@ public class Main1 {
                 rl.addArticle(art);
             }
             c.addLecturer(rl);
-            System.out.println("Lecturer added.");
+            System.out.println("Lecturer added successfully.");
         } else {
             Lecturer l = new Lecturer(name, id, Degree.valueOf(deg.toUpperCase()), major, sal);
             c.addLecturer(l);
-            System.out.println("Lecturer added.");
+            System.out.println("Lecturer added successfully.");
         }
     }
 
     private static void flowRemoveLecturer(College c) {
-        System.out.println("=== Remove Lecturer ===");
-        String name = readNonEmpty("Lecturer name to remove: ");
+        System.out.println("--- Remove Lecturer from Department ---");
+        String name = readNonEmpty("Lecturer name to remove: ", "Lecturer name");
         c.removeLecturer(name);
         System.out.println("Lecturer removed.");
     }
 
     private static void flowAddDepartment(College c) {
-        System.out.println("=== Add Department ===");
-        String name = readNonEmpty("Department name: ");
+        System.out.println("--- Add Department ---");
+        String name = readNonEmpty("Department name: ", "Department name");
         int ns = readInt("Number of students (>=0): ", 0, Integer.MAX_VALUE);
         Department d = new Department(name, ns);
         c.addDepartment(d);
@@ -127,9 +126,9 @@ public class Main1 {
     }
 
     private static void flowAddCommittee(College c) {
-        System.out.println("=== Add Committee ===");
-        String cn = readNonEmpty("Committee name: ");
-        String ch = readNonEmpty("Chair name: ");
+        System.out.println("--- Add Committee ---");
+        String cn = readNonEmpty("Committee name: ", "Committee name");
+        String ch = readNonEmpty("Chair name: ", "Chair name");
         Lecturer chair = c.findLecturerByName(ch);
         if (chair == null) {
             throw new LecturerNotFoundException("Chair '" + ch.trim() + "' not found.");
@@ -140,15 +139,15 @@ public class Main1 {
     }
 
     private static void flowRemoveCommittee(College c) {
-        System.out.println("=== Remove Committee ===");
-        String name = readNonEmpty("Committee to remove: ");
+        System.out.println("--- Remove Committee ---");
+        String name = readNonEmpty("Committee to remove: ", "Committee name");
         c.removeCommittee(name);
         System.out.println("Committee removed.");
     }
 
     private static void flowAverageByDepartment(College c) {
-        System.out.println("=== Average Salary by Department ===");
-        String d = readNonEmpty("Department name: ");
+        System.out.println("--- Average Salary by Department ---");
+        String d = readNonEmpty("Department name: ", "Department name");
         double avg = c.getAverageSalaryByDepartment(d);
         System.out.printf("Average in %s: ₪%.2f%n", d.trim(), avg);
     }
@@ -164,33 +163,33 @@ public class Main1 {
     }
 
     private static void flowAddLecturerToDepartment(College c) {
-        System.out.println("=== Add Lecturer to Department ===");
-        String ln = readNonEmpty("Lecturer name: ");
-        String dn = readNonEmpty("Department name: ");
+        System.out.println("--- Assign Lecturer to Department ---");
+        String ln = readNonEmpty("Lecturer name: ", "Lecturer name");
+        String dn = readNonEmpty("Department name: ", "Department name");
         c.addLecturerToDepartment(ln, dn);
         System.out.println("Lecturer added to department.");
     }
 
     private static void flowAddLecturerToCommittee(College c) {
-        System.out.println("=== Add Lecturer to Committee ===");
-        String cn = readNonEmpty("Committee name: ");
-        String ln = readNonEmpty("Lecturer name: ");
+        System.out.println("--- Assign Lecturer to Committee ---");
+        String cn = readNonEmpty("Committee name: ", "Committee name");
+        String ln = readNonEmpty("Lecturer name: ", "Lecturer name");
         c.addLecturerToCommittee(ln, cn);
         System.out.println("Lecturer added to committee.");
     }
 
     private static void flowCompareCommittees(College c) {
         System.out.println("--- Compare Committees ---");
-        String c1 = readNonEmpty("First committee: ");
-        String c2 = readNonEmpty("Second committee: ");
+        String c1 = readNonEmpty("First committee: ", "Committee name");
+        String c2 = readNonEmpty("Second committee: ", "Committee name");
         String result = c.compareCommittees(c1, c2);
         System.out.println(result);
     }
 
     private static void flowCompareDepartments(College c) {
         System.out.println("--- Compare Departments ---");
-        String d1 = readNonEmpty("First department: ");
-        String d2 = readNonEmpty("Second department: ");
+        String d1 = readNonEmpty("First department: ", "Department name");
+        String d2 = readNonEmpty("Second department: ", "Department name");
         int crit = readInt("Criterion (1=#lecturers, 2=#articles): ", 1, 2);
         String result = c.compareDepartments(d1, d2, crit);
         System.out.println(result);
@@ -198,15 +197,15 @@ public class Main1 {
 
     private static void flowCloneCommittee(College c) {
         System.out.println("--- Clone Committee ---");
-        String orig = readNonEmpty("Committee to clone: ");
+        String orig = readNonEmpty("Committee to clone: ", "Committee name");
         c.cloneCommittee(orig);
         System.out.println("Cloned successfully as '" + orig.trim() + "-new'.");
     }
 
     private static void flowRemoveCommitteeMember(College c) {
         System.out.println("--- Remove Committee Member ---");
-        String cn = readNonEmpty("Committee name: ");
-        String ln = readNonEmpty("Lecturer name: ");
+        String cn = readNonEmpty("Committee name: ", "Committee name");
+        String ln = readNonEmpty("Lecturer name: ", "Lecturer name");
         Committee cm = c.findCommitteeByName(cn);
         if (cm == null) {
             throw new CommitteeNotFoundException("Committee '" + cn.trim() + "' not found.");
@@ -224,13 +223,13 @@ public class Main1 {
         System.out.println("Lecturer removed from committee.");
     }
 
-    private static String readNonEmpty(String prompt) {
-        while (true) {
-            System.out.print(prompt);
-            String s = sc.nextLine().trim();
-            if (!s.isEmpty()) return s;
-            System.out.println("⚠ Cannot be empty, try again.");
+    private static String readNonEmpty(String prompt, String fieldName) {
+        System.out.print(prompt);
+        String s = sc.nextLine().trim();
+        if (s.isEmpty()) {
+            throw new NullInputException(fieldName);
         }
+        return s;
     }
 
     private static int readInt(String prompt, int min, int max) {
@@ -255,7 +254,7 @@ public class Main1 {
             try {
                 double v = Double.parseDouble(sc.nextLine().trim());
                 if (v < 0) {
-                    System.out.println("⚠️ Must be non-negative.");
+                    System.out.println("⚠ Must be non-negative.");
                 } else {
                     return v;
                 }
@@ -278,11 +277,7 @@ public class Main1 {
         }
     }
 
-
-
     public static void mainMenu() {
-        for (String line : MENU) {
-            System.out.println(line);
-        }
+        System.out.println(MENU);
     }
 }

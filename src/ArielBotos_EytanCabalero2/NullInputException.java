@@ -6,6 +6,6 @@ public class NullInputException extends InputException {
     }
 
     public NullInputException(String name) {
-        super(name + " cannot be empty.");
+        super(name + " cannot be empty, please try again.");
     }
 }
