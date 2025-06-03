@@ -1,3 +1,5 @@
+// Ariel Botos 206205254
+// Eytan Cabalero 214180036
 package ArielBotos_EytanCabalero;
 
 import java.util.Scanner;
@@ -8,6 +10,7 @@ public class Main {
     private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
+        // arielBotos_eytanCabalero
         String collegeName = readNonEmpty("Enter college name: ", "College name");
         College college  = new College(collegeName);
 
