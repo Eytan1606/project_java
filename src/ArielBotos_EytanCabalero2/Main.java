@@ -2,7 +2,7 @@ package ArielBotos_EytanCabalero2;
 
 import java.util.Scanner;
 
-public class Main1 {
+public class Main {
     private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -89,7 +89,7 @@ public class Main1 {
                 return;
             }
 
-            ResearchLecturer rl = new ResearchLecturer(name, id, Degree.DR, major, sal);
+            Doctor rl = new Doctor(name, id, Degree.DR, major, sal);
             for (String art : articles) {
                 rl.addArticle(art);
             }
@@ -203,11 +203,9 @@ public class Main1 {
 
         if (criterion == 1) {
             int totalArticles1 = 0;
-            // פה זה החישוב של היושב ראש. תראי אם את רוצה לשנות
             if (com1.getChair() instanceof Researcher) {
                 totalArticles1 += ((Researcher) com1.getChair()).getArticleCount();
             }
-            // פה זה החישוב של סהכ כל המאמשים של חברי הוועדה
             for (Lecturer member : com1.getMembers()) {
                 if (member instanceof Researcher) {
                     totalArticles1 += ((Researcher) member).getArticleCount();

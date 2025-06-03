@@ -1,11 +1,11 @@
 package ArielBotos_EytanCabalero2;
 
-public class ResearchLecturer extends Lecturer implements Researcher {
+public class Doctor extends Lecturer implements Researcher {
     private String[] articles;
     private int articleCount;
     private static final int INITIAL_ART_SIZE = 4;
 
-    public ResearchLecturer(String name, int id, Degree degree, String major, double salary) {
+    public Doctor(String name, int id, Degree degree, String major, double salary) {
         super(name, id, degree, major, salary);
         this.articles = new String[INITIAL_ART_SIZE];
         this.articleCount = 0;

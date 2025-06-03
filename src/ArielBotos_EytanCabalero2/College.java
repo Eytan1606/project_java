@@ -345,12 +345,12 @@ public class College {
         int cmp = c1.compareTo(c2);
 
         int articles1 = 0;
-        if (c1.getChair() instanceof ResearchLecturer) {
-            articles1 = ((ResearchLecturer) c1.getChair()).getArticleCount();
+        if (c1.getChair() instanceof Doctor) {
+            articles1 = ((Doctor) c1.getChair()).getArticleCount();
         }
         int articles2 = 0;
-        if (c2.getChair() instanceof ResearchLecturer) {
-            articles2 = ((ResearchLecturer) c2.getChair()).getArticleCount();
+        if (c2.getChair() instanceof Doctor) {
+            articles2 = ((Doctor) c2.getChair()).getArticleCount();
         }
         int size1 = c1.getTotalSize();
         int size2 = c2.getTotalSize();
@@ -392,8 +392,8 @@ public class College {
         int sum = 0;
         Lecturer[] lects = d.getLecturers();
         for (int i = 0; i < lects.length; i++) {
-            if (lects[i] instanceof ResearchLecturer) {
-                sum += ((ResearchLecturer) lects[i]).getArticleCount();
+            if (lects[i] instanceof Doctor) {
+                sum += ((Doctor) lects[i]).getArticleCount();
             }
         }
         return sum;

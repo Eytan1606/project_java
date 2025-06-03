@@ -1,7 +1,7 @@
 // Professor.java
 package ArielBotos_EytanCabalero2;
 
-public class Professor extends ResearchLecturer {
+public class Professor extends Doctor {
     private String grantingBody;
 
     public Professor(String name, int id, Degree degree, String major, double salary, String grantingBody) {
