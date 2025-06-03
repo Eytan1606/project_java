@@ -459,7 +459,7 @@ public class College {
             10 - Average salary by Department
             11 - Display All Lecturers
             12 - Display All Committees
-            13 - Compare two Committees(by memberCount or articleCount)
+            13 - Compare two Committees(by member Count or article Count)
             14 - Compare two professors 
             15 - Clone Committee\s""";
 
@@ -553,6 +553,7 @@ public class College {
         System.out.printf("Average in %s: ₪%.2f%n", d.trim(), avg);
     }
 
+
     public static void flowListAll(Object[] items) {
         if (items.length == 0) {
             System.out.println("⚠ has no members.");
@@ -571,6 +572,7 @@ public class College {
         System.out.println("Lecturer added to Department successfully.");
     }
 
+
     public static void flowAddLecturerToCommittee(College c) {
         System.out.println("--- Assign Lecturer to Committee ---");
         String cn = readNonEmpty("Committee name: ", "Committee name");
@@ -578,6 +580,7 @@ public class College {
         c.addLecturerToCommittee(ln, cn);
         System.out.println("Lecturer added to Committee successfully.");
     }
+
 
     public static void flowCompareCommitteesNew(College c) {
         System.out.println("--- Compare Committees (choose criterion) ---");
@@ -653,6 +656,7 @@ public class College {
             }
         }
     }
+
     public static void flowCompareProfessorsByArticles(College c) {
         System.out.println("--- Compare Professors by Number of Articles ---");
 
@@ -765,7 +769,6 @@ public class College {
             }
         }
     }
-
     private static String readOption(String prompt, String[] opts) {
         while (true) {
             System.out.print(prompt);
