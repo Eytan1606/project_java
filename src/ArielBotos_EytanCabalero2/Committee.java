@@ -12,11 +12,11 @@ public class Committee implements Comparable {
 
     public Committee(String name, Lecturer chair) {
         if (name == null || name.trim().isEmpty())
-            throw new IllegalArgumentException("Committee name cannot be empty");
+            throw new ValidationException("Committee name cannot be empty");
         if (chair == null)
-            throw new IllegalArgumentException("Chair cannot be null");
+            throw new ValidationException("Chair cannot be null");
         if (!chair.getDegree().canBeChair())
-            throw new InvalidChairException("Lecturer " + chair.getName() + " cannot be chair");
+            throw new ValidationException("Lecturer " + chair.getName() + " cannot be chair");
 
         this.name = name.trim();
         this.chair = chair;
@@ -45,7 +45,16 @@ public class Committee implements Comparable {
         if (newChair == null)
             throw new IllegalArgumentException("Chair cannot be null");
         if (!newChair.getDegree().canBeChair())
-            throw new InvalidChairException("Lecturer " + newChair.getName() + " cannot be chair");
+            throw new ValidationException("Lecturer " + newChair.getName() + " cannot be chair");
+
+        for (int i = 0; i < memberCount; i++) {
+            if (members[i].equals(newChair)) {
+
+                System.arraycopy(members, i + 1, members, i, memberCount - i - 1);
+                members[--memberCount] = null;
+                break;
+            }
+        }
 
         if (this.chair != null) {
             this.chair.removeFromCommittee(this);
@@ -68,6 +77,9 @@ public class Committee implements Comparable {
     public boolean addMember(Lecturer l) {
         if (l == null) {
             throw new IllegalArgumentException("Lecturer cannot be null");
+        }
+        if (l.equals(chair)) {
+            return false;
         }
         for (int i = 0; i < memberCount; i++) {
             if (members[i].equals(l)) {

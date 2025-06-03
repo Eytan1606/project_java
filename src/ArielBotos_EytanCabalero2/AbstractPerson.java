@@ -34,21 +34,13 @@ public abstract class AbstractPerson implements IEmployable {
     public String getName(){
         return name;
     }
-    protected void setName(String name){
-        if (name == null || name.trim().isEmpty())
-            throw new IllegalArgumentException("Name cannot be empty");
-        this.name = capitalize(name.trim());
-    }
+
+
     @Override
     public int getId(){return id;}
 
     public Degree getDegree(){return degree;}
 
-    public void setDegree(Degree degree){
-        if (degree == null)
-            throw new IllegalArgumentException("Degree cannot be null");
-        this.degree =degree;
-    }
     public String getMajor(){return major;}
 
     public void setMajor(String major){

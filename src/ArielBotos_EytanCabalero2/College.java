@@ -38,7 +38,7 @@ public class College {
         }
         for (int i = 0; i < lecturerCount; i++) {
             if (lecturers[i].equals(l)) {
-                throw new DuplicateLecturerException("Lecturer with ID " + l.getId() + " already exists.");
+                throw new DuplicateEntityException("Lecturer", String.valueOf(l.getId()));
             }
         }
         if (lecturerCount == lecturers.length) {
@@ -68,14 +68,14 @@ public class College {
         }
         Lecturer toRemove = findLecturerByName(name);
         if (toRemove == null) {
-            throw new LecturerNotFoundException("Lecturer '" + name.trim() + "' not found.");
+            throw new EntityNotFoundException("Lecturer '",name.trim());
         }
         removeLecturer(toRemove);
     }
 
     private void removeLecturer(Lecturer l) {
         if (l == null) {
-            throw new IllegalArgumentException("Lecturer cannot be null");
+            throw new ValidationException("Lecturer cannot be null");
         }
         int idx = -1;
         for (int i = 0; i < lecturerCount; i++) {
@@ -85,7 +85,7 @@ public class College {
             }
         }
         if (idx < 0) {
-            throw new LecturerNotFoundException("Lecturer with ID " + l.getId() + " not found.");
+            throw new EntityNotFoundException("Lecturer", String.valueOf(l.getId()));
         }
         l.removeFromDepartment();
 
@@ -112,15 +112,15 @@ public class College {
     public void addLecturerToDepartment(String lecturerName, String deptName) {
         Lecturer lec = findLecturerByName(lecturerName);
         if (lec == null) {
-            throw new LecturerNotFoundException("Lecturer '" + lecturerName.trim() + "' not found.");
+            throw new EntityNotFoundException("Lecturer", lecturerName.trim());
         }
         Department dept = findDepartmentByName(deptName);
         if (dept == null) {
-            throw new DepartmentNotFoundException("Department '" + deptName.trim() + "' not found.");
+            throw new EntityNotFoundException("Department", deptName.trim());
         }
         boolean added = lec.assignToDepartment(dept);
         if (!added) {
-            throw new AssignmentException(
+            throw new ValidationException(
                     "Lecturer '" + lec.getName() +
                             "' is already in department '" + dept.getName() + "'."
             );
@@ -130,15 +130,15 @@ public class College {
     public void addLecturerToCommittee(String lecturerName, String committeeName) {
         Committee c = findCommitteeByName(committeeName);
         if (c == null) {
-            throw new CommitteeNotFoundException("Committee '" + committeeName.trim() + "' not found.");
+            throw new EntityNotFoundException("Committee", committeeName.trim());
         }
         Lecturer lec = findLecturerByName(lecturerName);
         if (lec == null) {
-            throw new LecturerNotFoundException("Lecturer '" + lecturerName.trim() + "' not found.");
+            throw new EntityNotFoundException("Lecturer", lecturerName.trim());
         }
         boolean added = c.addMember(lec);
         if (!added) {
-            throw new AssignmentException(
+            throw new ValidationException(
                     "Lecturer '" + lec.getName() +
                             "' is already a member of committee '" + c.getName() + "'."
             );
@@ -150,11 +150,11 @@ public class College {
 
     public void addDepartment(Department d) {
         if (d == null) {
-            throw new IllegalArgumentException("Department cannot be null");
+            throw new ValidationException("Department cannot be null");
         }
         for (int i = 0; i < departmentCount; i++) {
             if (departments[i].equals(d)) {
-                throw new DuplicateDepartmentException("Department '" + d.getName() + "' already exists.");
+                throw new DuplicateEntityException("Department", d.getName());
             }
         }
         if (departmentCount == departments.length) {
@@ -192,18 +192,18 @@ public class College {
 
     public void removeDepartment(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Department name cannot be empty");
+            throw new ValidationException("Department name cannot be empty");
         }
         Department toRemove = findDepartmentByName(name);
         if (toRemove == null) {
-            throw new DepartmentNotFoundException("Department '" + name.trim() + "' not found.");
+            throw new EntityNotFoundException("Department", name.trim());
         }
         removeDepartment(toRemove);
     }
 
     private void removeDepartment(Department d) {
         if (d == null) {
-            throw new IllegalArgumentException("Department cannot be null");
+            throw new ValidationException("Department cannot be null");
         }
         int idx = -1;
         for (int i = 0; i < departmentCount; i++) {
@@ -213,7 +213,7 @@ public class College {
             }
         }
         if (idx < 0) {
-            throw new DepartmentNotFoundException("Department '" + d.getName() + "' not found.");
+            throw new EntityNotFoundException("Department", d.getName());
         }
 
         Lecturer[] lects = d.getLecturers();
@@ -226,11 +226,11 @@ public class College {
 
     public void addCommittee(Committee c) {
         if (c == null) {
-            throw new IllegalArgumentException("Committee cannot be null.");
+            throw new ValidationException("Committee cannot be null.");
         }
         for (int i = 0; i < committeeCount; i++) {
             if (committees[i].equals(c)) {
-                throw new DuplicateCommitteeException("Committee '" + c.getName() + "' already exists.");
+                throw new DuplicateEntityException("Committee", c.getName());
             }
         }
         if (committeeCount == committees.length) {
@@ -267,11 +267,11 @@ public class College {
 
     public void removeCommittee(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Committee name cannot be empty.");
+            throw new ValidationException("Committee name cannot be empty.");
         }
         Committee toRemove = findCommitteeByName(name);
         if (toRemove == null) {
-            throw new CommitteeNotFoundException("Committee '" + name.trim() + "' not found.");
+            throw new EntityNotFoundException("Committee", name.trim());
         }
         removeCommittee(toRemove);
     }
@@ -288,7 +288,7 @@ public class College {
             }
         }
         if (idx < 0) {
-            throw new CommitteeNotFoundException("Committee '" + c.getName() + "' not found.");
+            throw new EntityNotFoundException("Committee", c.getName());
         }
         Lecturer[] members = c.getMembers();
         for (Lecturer l : members) {
@@ -334,12 +334,12 @@ public class College {
     public String compareCommittees(String name1, String name2) {
         Committee c1 = findCommitteeByName(name1);
         if (c1 == null) {
-            throw new CommitteeNotFoundException("Committee '" + name1.trim() + "' not found.");
+            throw new EntityNotFoundException("Committee", name1.trim());
         }
 
         Committee c2 = findCommitteeByName(name2);
         if (c2 == null) {
-            throw new CommitteeNotFoundException("Committee '" + name2.trim() + "' not found.");
+            throw new EntityNotFoundException("Committee", name2.trim());
         }
 
         int cmp = c1.compareTo(c2);
@@ -376,11 +376,11 @@ public class College {
     public String compareDepartments(String d1, String d2, int crit) {
         Department dept1 = findDepartmentByName(d1);
         if (dept1 == null) {
-            throw new DepartmentNotFoundException("Department '" + d1.trim() + "' not found.");
+            throw new EntityNotFoundException("Department", d1.trim());
         }
         Department dept2 = findDepartmentByName(d2);
         if (dept2 == null) {
-            throw new DepartmentNotFoundException("Department '" + d2.trim() + "' not found.");
+            throw new EntityNotFoundException("Department", d2.trim());
         }
 
         int v1 = (crit == 1) ? dept1.getLecturerCount() : sumArticles(dept1);
@@ -405,13 +405,13 @@ public class College {
         }
         Committee o = findCommitteeByName(origName);
         if (o == null) {
-            throw new CommitteeNotFoundException("Committee '" + origName.trim() + "' not found.");
+            throw new EntityNotFoundException("Committee", origName.trim());
         }
 
         String newName = origName.trim() + "-new";
 
         if (findCommitteeByName(newName) != null) {
-            throw new DuplicateCommitteeException("Committee '" + newName + "' already exists.");
+            throw new DuplicateEntityException("Committee", newName);
         }
 
         Committee copy = new Committee(newName, o.getChair());

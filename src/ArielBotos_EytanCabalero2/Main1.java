@@ -33,18 +33,13 @@ public class Main1 {
                     case 15 -> flowCloneCommittee(college);
                     default -> System.out.println("⚠ Option not implemented.");
                 }
-            } catch (NullInputException |
-                     DuplicateLecturerException |
-                     LecturerNotFoundException |
-                     DuplicateDepartmentException |
-                     DepartmentNotFoundException |
-                     DuplicateCommitteeException |
-                     CommitteeNotFoundException |
-                     AssignmentException |
-                     InvalidOperationException ex) {
-                System.out.println("⚠ Error: " + ex.getMessage());
-            }
-            System.out.println();
+            }  catch (ValidationException |
+                DuplicateEntityException |
+                EntityNotFoundException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+
+        System.out.println();
         }
     }
 
@@ -57,17 +52,15 @@ public class Main1 {
             4  - Remove Committee
             5  - Assign Lecturer to Department
             6  - Assign Lecturer to Committee
-            7  - Remove Lecturer from Department // לא יודעת למה התכוונת כי היה רשום רק remove lecturer אבל המתודה עושה את זה ->>
+            7  - Remove Lecturer from Department 
             8  - Remove Lecturer from Committee
             9  - Average salary (All Lecturers)
             10 - Average salary by Department
             11 - Display All Lecturers
             12 - Display All Committees
-            13 - Compare two Committees(by memberCount or articleCount) // ביקשו לתת אפשרות להשוואה לשני קריטריונים - כלומר אחרי שבוחרים 13 צריך עוד שאלה של על פי איזה קריטריון רוצים להשוות
-            // צריך להוסיף השוואה בין ד"ר לפרופסור על פי מספר המאמרים
-            14 - Compare two professors // לא ביקשו להשוות
+            13 - Compare two Committees(by memberCount or articleCount)
+            14 - Compare two professors 
             15 - Clone Committee\s""";
-            // אני פתאום חושבת על זה ואין בכלל אפשרות להסיר מרצה וועדה מcollege
 
     private static void flowAddLecturer(College c) {
         System.out.println("--- Add Lecturer ---");
@@ -129,13 +122,20 @@ public class Main1 {
         System.out.println("--- Add Committee ---");
         String cn = readNonEmpty("Committee name: ", "Committee name");
         String ch = readNonEmpty("Chair name: ", "Chair name");
+
         Lecturer chair = c.findLecturerByName(ch);
         if (chair == null) {
-            throw new LecturerNotFoundException("Chair '" + ch.trim() + "' not found.");
+            System.out.println("Error: Lecturer '" + ch.trim() + "' not found.");
+            return;
         }
-        Committee com = new Committee(cn.trim(), chair);
-        c.addCommittee(com);
-        System.out.println("Committee added successfully.");
+
+        try {
+            Committee com = new Committee(cn.trim(), chair);
+            c.addCommittee(com);
+            System.out.println("Committee added successfully.");
+        } catch (ValidationException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
     }
 
     private static void flowRemoveCommittee(College c) {
@@ -181,6 +181,7 @@ public class Main1 {
     private static void flowCompareCommitteesNew(College c) {
         System.out.println("--- Compare Committees (choose criterion) ---");
 
+        // 1. קלט שמות שתי הוועדות
         String name1 = readNonEmpty("First Committee name: ", "Committee name");
         Committee com1 = c.findCommitteeByName(name1);
         if (com1 == null) {
@@ -196,35 +197,48 @@ public class Main1 {
         }
 
         System.out.println("Choose comparison criterion:");
-        System.out.println("  1. Number of Articles (chair only)");
+        System.out.println("  1. Number of Articles (all members)");
         System.out.println("  2. Number of Members (excluding chair)");
         int criterion = readInt("Enter 1 or 2: ", 1, 2);
 
         if (criterion == 1) {
-
-            int articles1 = 0;
+            int totalArticles1 = 0;
+            // פה זה החישוב של היושב ראש. תראי אם את רוצה לשנות
             if (com1.getChair() instanceof Researcher) {
-                articles1 = ((Researcher) com1.getChair()).getArticleCount();
+                totalArticles1 += ((Researcher) com1.getChair()).getArticleCount();
             }
-            int articles2 = 0;
-            if (com2.getChair() instanceof Researcher) {
-                articles2 = ((Researcher) com2.getChair()).getArticleCount();
+            // פה זה החישוב של סהכ כל המאמשים של חברי הוועדה
+            for (Lecturer member : com1.getMembers()) {
+                if (member instanceof Researcher) {
+                    totalArticles1 += ((Researcher) member).getArticleCount();
+                }
             }
-            System.out.printf("» \"%s\" chair has %d article(s).%n", name1, articles1);
-            System.out.printf("» \"%s\" chair has %d article(s).%n", name2, articles2);
 
-            if (articles1 == articles2) {
-                System.out.printf("Result: Tie – both chairs have %d article(s).%n", articles1);
-            } else if (articles1 > articles2) {
+            int totalArticles2 = 0;
+            if (com2.getChair() instanceof Researcher) {
+                totalArticles2 += ((Researcher) com2.getChair()).getArticleCount();
+            }
+            for (Lecturer member : com2.getMembers()) {
+                if (member instanceof Researcher) {
+                    totalArticles2 += ((Researcher) member).getArticleCount();
+                }
+            }
+
+            System.out.printf("» \"%s\" total articles: %d.%n", name1, totalArticles1);
+            System.out.printf("» \"%s\" total articles: %d.%n", name2, totalArticles2);
+
+            if (totalArticles1 == totalArticles2) {
+                System.out.printf("Result: Tie – both committees have %d article(s).%n", totalArticles1);
+            } else if (totalArticles1 > totalArticles2) {
                 System.out.printf("Result: \"%s\" wins with %d vs %d articles.%n",
-                        name1, articles1, articles2);
+                        name1, totalArticles1, totalArticles2);
             } else {
                 System.out.printf("Result: \"%s\" wins with %d vs %d articles.%n",
-                        name2, articles2, articles1);
+                        name2, totalArticles2, totalArticles1);
             }
 
-        } else { // criterion == 2
-            // מספר חברים בכל ועדה (מתודה getMembers מחזירה רק החברים, לא כולל היושב ראש)
+        } else {
+
             int membersCount1 = com1.getMembers().length;
             int membersCount2 = com2.getMembers().length;
             System.out.printf("» \"%s\" has %d member(s).%n", name1, membersCount1);
@@ -241,7 +255,6 @@ public class Main1 {
             }
         }
     }
-
     private static void flowCompareProfessorsByArticles(College c) {
         System.out.println("--- Compare Professors by Number of Articles ---");
 
@@ -297,17 +310,17 @@ public class Main1 {
         String ln = readNonEmpty("Lecturer name: ", "Lecturer name");
         Committee cm = c.findCommitteeByName(cn);
         if (cm == null) {
-            throw new CommitteeNotFoundException("Committee '" + cn.trim() + "' not found.");
+            throw new EntityNotFoundException("Committee", cn.trim());
         }
         Lecturer lec = c.findLecturerByName(ln);
         if (lec == null) {
-            throw new LecturerNotFoundException("Lecturer '" + ln.trim() + "' not found.");
+            throw new EntityNotFoundException("Lecturer", ln.trim());
         }
         boolean removed = cm.removeMember(lec);
         if (!removed) {
-            throw new AssignmentException(
+            throw new ValidationException(
                     "Lecturer '" + ln.trim() + "' is not a member of Committee '" + cm.getName() + "'."
-            );
+                    );
         }
         System.out.println("Lecturer removed from Committee successfully.");
     }
