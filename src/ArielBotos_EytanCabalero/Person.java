@@ -2,8 +2,6 @@ package ArielBotos_EytanCabalero;
 
 import java.util.Objects;
 
-
-
 public abstract class Person implements IEmployable {
     private String name;
     private final int id;
