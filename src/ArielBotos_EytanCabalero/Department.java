@@ -1,5 +1,5 @@
 // Department.java
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 import java.util.Objects;
 

@@ -1,5 +1,5 @@
 // Professor.java
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 public class Professor extends Doctor {
     private String grantingBody;

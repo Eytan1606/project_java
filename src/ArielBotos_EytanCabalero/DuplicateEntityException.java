@@ -1,4 +1,4 @@
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 public class DuplicateEntityException extends AppException {
   public DuplicateEntityException(String entityType, String entityName) {

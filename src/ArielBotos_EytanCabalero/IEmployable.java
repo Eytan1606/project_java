@@ -1,4 +1,4 @@
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 public interface IEmployable {
     int getId();

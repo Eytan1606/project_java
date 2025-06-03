@@ -1,4 +1,4 @@
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 public class EntityNotFoundException extends AppException {
     public EntityNotFoundException(String entityType, String entityName) {

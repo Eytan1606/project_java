@@ -1,5 +1,5 @@
 // Degree.java
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 public enum Degree {
     BA(false) ,

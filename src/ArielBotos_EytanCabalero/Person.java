@@ -1,17 +1,17 @@
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 import java.util.Objects;
 
 
 
-public abstract class AbstractPerson implements IEmployable {
+public abstract class Person implements IEmployable {
     private String name;
     private final int id;
     private Degree degree;
     private String major;
     private double salary;
 
-    protected AbstractPerson(String name, int id, Degree degree, String major , double salary ){
+    protected Person(String name, int id, Degree degree, String major , double salary ){
         if (name == null || name.trim().isEmpty())
             throw new IllegalArgumentException("Name cannot be empty");
         if (id <=0)
@@ -61,8 +61,8 @@ public abstract class AbstractPerson implements IEmployable {
     @Override
     public boolean equals(Object o){
         if (this == o) return true;
-        if (!(o instanceof AbstractPerson)) return false;
-        AbstractPerson other = (AbstractPerson) o;
+        if (!(o instanceof Person)) return false;
+        Person other = (Person) o;
         return this.id == other.id;
     }
     @Override

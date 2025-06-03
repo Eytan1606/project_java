@@ -1,8 +1,6 @@
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
-import java.util.Objects;
-
-public class Lecturer extends AbstractPerson {
+public class Lecturer extends Person {
     private static final int GROW = 4;
 
     private Department department;

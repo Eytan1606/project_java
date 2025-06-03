@@ -1,4 +1,4 @@
-package ArielBotos_EytanCabalero2;
+package ArielBotos_EytanCabalero;
 
 public class Doctor extends Lecturer implements Researcher {
     private String[] articles;
