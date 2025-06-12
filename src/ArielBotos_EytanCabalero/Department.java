@@ -23,14 +23,6 @@ public class Department {
         return name;
     }
 
-
-    public void setNumStudents(int numStudents) {
-        if (numStudents < 0)
-            throw new IllegalArgumentException("Number of students cannot be negative");
-        this.numStudents = numStudents;
-    }
-
-
     public Lecturer[] getLecturers() {
         return lecturers.toArray(new Lecturer[0]);
     }

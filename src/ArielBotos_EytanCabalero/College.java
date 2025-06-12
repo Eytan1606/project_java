@@ -156,32 +156,6 @@ public class College {
     }
 
 
-
-    public void removeDepartment(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new ValidationException("Department name cannot be empty");
-        }
-        Department toRemove = findDepartmentByName(name);
-        if (toRemove == null) {
-            throw new EntityNotFoundException("Department", name.trim());
-        }
-        removeDepartment(toRemove);
-    }
-
-    private void removeDepartment(Department d) {
-        if (d == null) {
-            throw new ValidationException("Department cannot be null");
-        }
-        if (!departments.contains(d)) {
-            throw new EntityNotFoundException("Department", d.getName());
-        }
-
-        for (Lecturer l : d.getLecturers()) {
-            l.removeFromDepartment();
-        }
-        departments.remove(d);
-    }
-
     public boolean addCommittee(Committee c) {
         Objects.requireNonNull(c, "Committee cannot be null");
         if (committees.contains(c)) {
@@ -259,32 +233,6 @@ public class College {
             sum += lects[i].getSalary();
         }
         return sum / lects.length;
-    }
-
-    public String compareDepartments(String d1, String d2, int crit) {
-        Department dept1 = findDepartmentByName(d1);
-        if (dept1 == null) {
-            throw new EntityNotFoundException("Department", d1.trim());
-        }
-        Department dept2 = findDepartmentByName(d2);
-        if (dept2 == null) {
-            throw new EntityNotFoundException("Department", d2.trim());
-        }
-
-        int v1 = (crit == 1) ? dept1.getLecturerCount() : sumArticles(dept1);
-        int v2 = (crit == 1) ? dept2.getLecturerCount() : sumArticles(dept2);
-        return String.format("%s: %d vs %s: %d", dept1.getName(), v1, dept2.getName(), v2);
-    }
-
-    private int sumArticles(Department d) {
-        int sum = 0;
-        Lecturer[] lects = d.getLecturers();
-        for (int i = 0; i < lects.length; i++) {
-            if (lects[i] instanceof Doctor) {
-                sum += ((Doctor) lects[i]).getArticleCount();
-            }
-        }
-        return sum;
     }
 
     public void cloneCommittee(String origName) {

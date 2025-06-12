@@ -4,6 +4,6 @@ public interface Researcher<T> {
     boolean addArticle(T item);
 
     int     getArticleCount();
+    String[] getArticles();
 
-    T[]     getArticles();
 }

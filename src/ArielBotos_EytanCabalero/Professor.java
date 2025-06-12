@@ -9,9 +9,6 @@ public class Professor extends Doctor {
         setGrantingBody(grantingBody);
     }
 
-    public String getGrantingBody() {
-        return grantingBody;
-    }
 
     public void setGrantingBody(String grantingBody) {
         if (grantingBody == null || grantingBody.trim().isEmpty())

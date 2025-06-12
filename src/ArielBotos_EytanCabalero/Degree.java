@@ -17,15 +17,6 @@ public enum Degree {
         return canBeChair;
     }
 
-    public static boolean isValid(String s){
-        if (s == null) return false;
-        for (Degree d : values()){
-            if  (d.name().equalsIgnoreCase(s.trim())){
-                return true;
-            }
-        }
-        return false;
-    }
     public String getName() {
         return name;
     }

@@ -28,39 +28,12 @@ public class Committee implements Comparable<Committee> {
         return name;
     }
 
-    public void setName(String name) {
-        if (name == null || name.trim().isEmpty())
-            throw new IllegalArgumentException("Committee name cannot be empty.");
-        this.name = name.trim();
-    }
-
     public Lecturer getChair() {
         return chair;
     }
     public Degree getMemberDegree() {
         return memberDegree;
     }
-
-
-    public void setChair(Lecturer newChair) {
-        Objects.requireNonNull(newChair, "Chair cannot be null.");
-        if (!newChair.getDegree().canBeChair()) {
-            throw new ValidationException(
-                    "Lecturer " + newChair.getName() + " cannot be chair"
-            );
-        }
-
-        members.remove(newChair);
-
-        if (this.chair != null) {
-            this.chair.removeFromCommittee(this);
-        }
-
-        this.chair = newChair;
-        newChair.addToCommittee(this);
-    }
-
-
     public Lecturer[] getMembers() {
        return members.toArray(new Lecturer[0]);
     }

@@ -11,9 +11,6 @@ public class Lecturer extends Person {
         super(name, id, degree, major, salary);
         this.department = null;
     }
-    public Department getDepartment(){
-        return department;
-    }
 
     void setDepartment(Department department){
         this.department = department;

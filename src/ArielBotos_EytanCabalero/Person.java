@@ -39,21 +39,10 @@ public abstract class Person implements IEmployable {
 
     public Degree getDegree(){return degree;}
 
-    public String getMajor(){return major;}
 
-    public void setMajor(String major){
-        if (major == null || major.trim().isEmpty())
-            throw new IllegalArgumentException("Major cannot be empty");
-        this.major = major.trim();
-    }
     @Override
     public double getSalary(){
         return salary;
-    }
-    public void setSalary(double salary){
-        if (salary < 0)
-            throw new IllegalArgumentException("Salary has to be positive");
-        this.salary = salary;
     }
 
     @Override
