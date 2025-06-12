@@ -1,46 +1,44 @@
 package ArielBotos_EytanCabalero;
 
-public class Doctor extends Lecturer implements Researcher {
-    private String[] articles;
-    private int articleCount;
-    private static final int INITIAL_ART_SIZE = 4;
+import java.util.Objects;
 
-    public Doctor(String name, int id, Degree degree, String major, double salary) {
+public class Doctor extends Lecturer implements Researcher<String> {
+    private CustomArray<String> articles = new CustomArray<>();
+
+    public Doctor(String name, int id, Degree degree, String major, double salary){
         super(name, id, degree, major, salary);
-        this.articles = new String[INITIAL_ART_SIZE];
-        this.articleCount = 0;
     }
 
     @Override
     public boolean addArticle(String title) {
-        if (title == null || title.trim().isEmpty())
-            throw new IllegalArgumentException("Article title cannot be empty");
-        if (articleCount == articles.length) {
-            String[] temp = new String[articles.length * 2];
-            System.arraycopy(articles, 0, temp, 0, articles.length);
-            articles = temp;
+        Objects.requireNonNull(title, "Article title cannot be null.");
+        String trimmed = title.trim();
+        if (trimmed.isEmpty()) {
+            throw new IllegalArgumentException("Article title cannot be empty.");
         }
-        articles[articleCount++] = title.trim();
+        if (articles.contains(trimmed)) {
+            return false;
+        }
+        articles.add(trimmed);
         return true;
     }
 
     @Override
     public int getArticleCount() {
-        return articleCount;
+        return articles.size();
     }
 
     @Override
     public String[] getArticles() {
-        if (articleCount == 0) {
-            return new String[0];
-        }
-        String[] copy = new String[articleCount];
-        System.arraycopy(articles, 0, copy, 0, articleCount);
-        return copy;
+        return articles.toArray(new String[0]);
     }
 
     @Override
     public String toString() {
-        return String.format("%s , Articles: %d", super.toString(), articleCount);
+        return String.format(
+                "%s, Articles: %d",
+                super.toString(),
+                getArticleCount()
+        );
     }
 }

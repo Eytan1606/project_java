@@ -1,10 +1,9 @@
 package ArielBotos_EytanCabalero;
 
-public interface Researcher {
+public interface Researcher<T> {
+    boolean addArticle(T item);
 
-    boolean addArticle(String title);
+    int     getArticleCount();
 
-    int getArticleCount();
-
-    String[] getArticles();
+    T[]     getArticles();
 }

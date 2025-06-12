@@ -8,6 +8,7 @@ public enum Degree {
     PROF(true);
 
     private final boolean canBeChair;
+    private String name;
 
     Degree(boolean canBeChair){
         this.canBeChair = canBeChair;
@@ -25,4 +26,8 @@ public enum Degree {
         }
         return false;
     }
+    public String getName() {
+        return name;
+    }
+
 }

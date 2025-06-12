@@ -5,46 +5,26 @@ import java.util.Scanner;
 
 public class College {
     private static final Scanner sc = new Scanner(System.in);
-    private static final int GROW = 2;
-
     private final String collegeName;
-    private Lecturer[] lecturers;
-    private int lecturerCount;
-    private Department[] departments;
-    private int departmentCount;
 
-
-    private Committee[] committees;
-    private int committeeCount;
+    private CustomArray<Lecturer> lecturers = new CustomArray<>();
+    private CustomArray<Department> departments = new CustomArray<>();
+    private CustomArray<Committee> committees = new CustomArray<>();
 
     public College(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new NullInputException();
         }
         this.collegeName    = name.trim();
-        this.lecturers      = new Lecturer[2];
-        this.lecturerCount  = 0;
-        this.departments    = new Department[2];
-        this.departmentCount = 0;
-        this.committees     = new Committee[2];
-        this.committeeCount = 0;
     }
 
-    public void addLecturer(Lecturer l) {
-        if (l == null) {
-            throw new IllegalArgumentException("Lecturer cannot be null");
+    public boolean addLecturer(Lecturer l) {
+        Objects.requireNonNull(l, "Lecturer cannot be null");
+        if (!lecturers.contains(l)) {
+            lecturers.add(l);
+            return true;
         }
-        for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i].equals(l)) {
-                throw new DuplicateEntityException("Lecturer", String.valueOf(l.getId()));
-            }
-        }
-        if (lecturerCount == lecturers.length) {
-            Lecturer[] temp = new Lecturer[lecturers.length * GROW];
-            System.arraycopy(lecturers, 0, temp, 0, lecturers.length);
-            lecturers = temp;
-        }
-        lecturers[lecturerCount++] = l;
+        return false;
     }
 
     public Lecturer findLecturerByName(String name) {
@@ -52,9 +32,10 @@ public class College {
             return null;
         }
         String key = name.trim();
-        for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i].getName().equalsIgnoreCase(key)) {
-                return lecturers[i];
+        // במקום for על המערך הישן – לולאה על המערך שמחזיר getLecturers()
+        for (Lecturer l : getLecturers()) {
+            if (l.getName().equalsIgnoreCase(key)) {
+                return l;
             }
         }
         return null;
@@ -75,36 +56,23 @@ public class College {
         if (l == null) {
             throw new ValidationException("Lecturer cannot be null");
         }
-        int idx = -1;
-        for (int i = 0; i < lecturerCount; i++) {
-            if (lecturers[i].equals(l)) {
-                idx = i;
-                break;
-            }
-        }
-        if (idx < 0) {
+        if (!lecturers.contains(l)) {
             throw new EntityNotFoundException("Lecturer", String.valueOf(l.getId()));
         }
+
         l.removeFromDepartment();
 
-        Committee[] joined = l.getCommittees();
-        for (Committee c : joined) {
+        for (Committee c : l.getCommittees()) {
             l.removeFromCommittee(c);
         }
 
-        System.arraycopy(lecturers, idx + 1, lecturers, idx, lecturerCount - idx - 1);
-        lecturers[--lecturerCount] = null;
+        lecturers.remove(l);
     }
 
 
 
     public Lecturer[] getLecturers() {
-        if (lecturerCount == 0) {
-            return new Lecturer[0];
-        }
-        Lecturer[] copy = new Lecturer[lecturerCount];
-        System.arraycopy(lecturers, 0, copy, 0, lecturerCount);
-        return copy;
+        return lecturers.toArray(new Lecturer[0]);
     }
 
     public void addLecturerToDepartment(String lecturerName, String deptName) {
@@ -130,12 +98,15 @@ public class College {
         if (c == null) {
             throw new EntityNotFoundException("Committee", committeeName.trim());
         }
+
         Lecturer lec = findLecturerByName(lecturerName);
         if (lec == null) {
             throw new EntityNotFoundException("Lecturer", lecturerName.trim());
         }
-        boolean added = c.addMember(lec);
-        if (!added) {
+
+        try {
+            c.addMember(lec);
+        } catch (DuplicateEntityException ex) {
             throw new ValidationException(
                     "Lecturer '" + lec.getName() +
                             "' is already a member of committee '" + c.getName() + "'."
@@ -147,30 +118,17 @@ public class College {
 
 
     public void addDepartment(Department d) {
-        if (d == null) {
-            throw new ValidationException("Department cannot be null");
+        Objects.requireNonNull(d, "Department cannot be null.");
+
+        if (departments.contains(d)) {
+            throw new DuplicateEntityException("Department", d.getName());
         }
-        for (int i = 0; i < departmentCount; i++) {
-            if (departments[i].equals(d)) {
-                throw new DuplicateEntityException("Department", d.getName());
-            }
-        }
-        if (departmentCount == departments.length) {
-            Department[] temp = new Department[departments.length * GROW];
-            System.arraycopy(departments, 0, temp, 0, departments.length);
-            departments = temp;
-        }
-        departments[departmentCount++] = d;
+        departments.add(d);
     }
 
 
     public Department[] getDepartments() {
-        if (departmentCount == 0) {
-            return new Department[0];
-        }
-        Department[] copy = new Department[departmentCount];
-        System.arraycopy(departments, 0, copy, 0, departmentCount);
-        return copy;
+        return departments.toArray(new Department[0]);
     }
 
 
@@ -179,13 +137,24 @@ public class College {
             return null;
         }
         String key = name.trim();
-        for (int i = 0; i < departmentCount; i++) {
-            if (departments[i].getName().equalsIgnoreCase(key)) {
-                return departments[i];
+        for (Department d : getDepartments()) {
+            if (d.getName().equalsIgnoreCase(key)) {
+                return d;
             }
         }
         return null;
     }
+    public Degree findDegreeByName(String name) {
+        if (name == null || name.trim().isEmpty()) return null;
+        String key = name.trim();
+        for (Degree d : Degree.values()) {
+            if (d.name().equalsIgnoreCase(key)) {
+                return d;
+            }
+        }
+        return null;
+    }
+
 
 
     public void removeDepartment(String name) {
@@ -203,50 +172,28 @@ public class College {
         if (d == null) {
             throw new ValidationException("Department cannot be null");
         }
-        int idx = -1;
-        for (int i = 0; i < departmentCount; i++) {
-            if (departments[i].equals(d)) {
-                idx = i;
-                break;
-            }
-        }
-        if (idx < 0) {
+        if (!departments.contains(d)) {
             throw new EntityNotFoundException("Department", d.getName());
         }
 
-        Lecturer[] lects = d.getLecturers();
-        for (Lecturer l : lects) {
+        for (Lecturer l : d.getLecturers()) {
             l.removeFromDepartment();
         }
-        System.arraycopy(departments, idx + 1, departments, idx, departmentCount - idx - 1);
-        departments[--departmentCount] = null;
+        departments.remove(d);
     }
 
-    public void addCommittee(Committee c) {
-        if (c == null) {
-            throw new ValidationException("Committee cannot be null.");
+    public boolean addCommittee(Committee c) {
+        Objects.requireNonNull(c, "Committee cannot be null");
+        if (committees.contains(c)) {
+            throw new DuplicateEntityException("Committee", c.getName());
         }
-        for (int i = 0; i < committeeCount; i++) {
-            if (committees[i].equals(c)) {
-                throw new DuplicateEntityException("Committee", c.getName());
-            }
-        }
-        if (committeeCount == committees.length) {
-            Committee[] temp = new Committee[committees.length * GROW];
-            System.arraycopy(committees, 0, temp, 0, committees.length);
-            committees = temp;
-        }
-        committees[committeeCount++] = c;
+        committees.add(c);
+        return true;
     }
 
 
     public Committee[] getCommittees() {
-        if (committeeCount == 0) {
-            return new Committee[0];
-        }
-        Committee[] copy = new Committee[committeeCount];
-        System.arraycopy(committees, 0, copy, 0, committeeCount);
-        return copy;
+        return committees.toArray(new Committee[0]);
     }
 
 
@@ -255,9 +202,9 @@ public class College {
             return null;
         }
         String key = name.trim();
-        for (int i = 0; i < committeeCount; i++) {
-            if (committees[i].getName().equalsIgnoreCase(key)) {
-                return committees[i];
+        for (Committee c : getCommittees()) {
+            if (c.getName().equalsIgnoreCase(key)) {
+                return c;
             }
         }
         return null;
@@ -276,39 +223,24 @@ public class College {
 
     private void removeCommittee(Committee c) {
         if (c == null) {
-            throw new IllegalArgumentException("Committee cannot be null.");
+            throw new IllegalArgumentException("Committee cannot be null");
         }
-        int idx = -1;
-        for (int i = 0; i < committeeCount; i++) {
-            if (committees[i].equals(c)) {
-                idx = i;
-                break;
-            }
-        }
-        if (idx < 0) {
+
+        if (!committees.contains(c)) {
             throw new EntityNotFoundException("Committee", c.getName());
         }
-        Lecturer[] members = c.getMembers();
-        for (Lecturer l : members) {
-            c.removeMember(l);
+
+        for (Lecturer l : c.getMembers()) {
+            l.removeFromCommittee(c);
         }
-        if (c.getChair() != null) {
-            c.setChair(null);
+
+        Lecturer chair = c.getChair();
+        if (chair != null) {
+            chair.removeFromCommittee(c);
         }
-        System.arraycopy(committees, idx + 1, committees, idx, committeeCount - idx - 1);
-        committees[--committeeCount] = null;
+        committees.remove(c);
     }
 
-    public double getAverageSalaryAllLecturers() {
-        if (lecturerCount == 0) {
-            return 0.0;
-        }
-        double sum = 0.0;
-        for (int i = 0; i < lecturerCount; i++) {
-            sum += lecturers[i].getSalary();
-        }
-        return sum / lecturerCount;
-    }
 
     public double getAverageSalaryByDepartment(String deptName) {
         if (deptName == null || deptName.trim().isEmpty()) {
@@ -327,48 +259,6 @@ public class College {
             sum += lects[i].getSalary();
         }
         return sum / lects.length;
-    }
-
-    public String compareCommittees(String name1, String name2) {
-        Committee c1 = findCommitteeByName(name1);
-        if (c1 == null) {
-            throw new EntityNotFoundException("Committee", name1.trim());
-        }
-
-        Committee c2 = findCommitteeByName(name2);
-        if (c2 == null) {
-            throw new EntityNotFoundException("Committee", name2.trim());
-        }
-
-        int cmp = c1.compareTo(c2);
-
-        int articles1 = 0;
-        if (c1.getChair() instanceof Doctor) {
-            articles1 = ((Doctor) c1.getChair()).getArticleCount();
-        }
-        int articles2 = 0;
-        if (c2.getChair() instanceof Doctor) {
-            articles2 = ((Doctor) c2.getChair()).getArticleCount();
-        }
-        int size1 = c1.getTotalSize();
-        int size2 = c2.getTotalSize();
-
-        if (cmp == 0) {
-            return String.format(
-                    "Committees \"%s\" and \"%s\" are tied: %d articles, %d members.",
-                    c1.getName(), c2.getName(), articles1, size1
-            );
-        } else if (cmp < 0) {
-            return String.format(
-                    "Committee \"%s\" wins with %d articles vs %d articles.",
-                    c2.getName(), articles2, articles1
-            );
-        } else {
-            return String.format(
-                    "Committee \"%s\" wins with %d articles vs %d articles.",
-                    c1.getName(), articles1, articles2
-            );
-        }
     }
 
     public String compareDepartments(String d1, String d2, int crit) {
@@ -399,26 +289,39 @@ public class College {
 
     public void cloneCommittee(String origName) {
         if (origName == null || origName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Original name cannot be empty");
+            throw new ValidationException("Original name cannot be empty");
         }
-        Committee o = findCommitteeByName(origName);
+        String key = origName.trim();
+        Committee o = findCommitteeByName(key);
         if (o == null) {
-            throw new EntityNotFoundException("Committee", origName.trim());
+            throw new EntityNotFoundException("Committee", key);
         }
 
-        String newName = origName.trim() + "-new";
-
+        String newName = key + "-new";
         if (findCommitteeByName(newName) != null) {
             throw new DuplicateEntityException("Committee", newName);
         }
 
-        Committee copy = new Committee(newName, o.getChair());
-        Lecturer[] mems = o.getMembers();
-        for (Lecturer l : mems) {
-            copy.addMember(l);
+        // Use the new 3-arg constructor: name, chair, memberDegree
+        Committee copy = new Committee(
+                newName,
+                o.getChair(),
+                o.getMemberDegree()
+        );
+
+        // Copy over all members
+        for (Lecturer l : o.getMembers()) {
+            try {
+                copy.addMember(l);
+            } catch (DuplicateEntityException ex) {
+                // shouldn’t happen—original had no duplicates
+            }
         }
+
+        // Finally add it to the college
         addCommittee(copy);
     }
+
 
 
 
@@ -439,7 +342,10 @@ public class College {
     public String toString() {
         return String.format(
                 "College: %s, Lecturers: %d, Departments: %d, Committees: %d",
-                collegeName, lecturerCount, departmentCount, committeeCount
+                collegeName,
+                lecturers.size(),
+                departments.size(),
+                committees.size()
         );
     }
 
@@ -502,6 +408,17 @@ public class College {
             System.out.println("Lecturer added successfully.");
         }
     }
+    public double getAverageSalaryAllLecturers() {
+        Lecturer[] all = getLecturers();
+        if (all.length == 0) {
+            return 0.0;
+        }
+        double sum = 0.0;
+        for (Lecturer l : all) {
+            sum += l.getSalary();
+        }
+        return sum / all.length;
+    }
 
     public static void flowRemoveLecturer(College c) {
         System.out.println("--- Remove Lecturer from Department ---");
@@ -520,24 +437,35 @@ public class College {
     }
 
     public static void flowAddCommittee(College c) {
-        System.out.println("--- Add Committee ---");
+        System.out.println("---- Add Committee ----");
         String cn = readNonEmpty("Committee name: ", "Committee name");
-        String ch = readNonEmpty("Chair name: ", "Chair name");
+        String ch = readNonEmpty("Chair name: ",     "Chair name");
+        String md = readNonEmpty("Member degree: ",  "Member degree");
 
         Lecturer chair = c.findLecturerByName(ch);
         if (chair == null) {
-            System.out.println("Error: Lecturer '" + ch.trim() + "' not found.");
+            System.out.println("Error: Lecturer '" + ch + "' not found.");
+            return;
+        }
+        Degree memberDegree = c.findDegreeByName(md);
+        if (memberDegree == null) {
+            System.out.println("Error: Degree '" + md + "' not found.");
             return;
         }
 
         try {
-            Committee com = new Committee(cn.trim(), chair);
+            Committee com = new Committee(
+                    cn.trim(),
+                    chair,
+                    memberDegree
+            );
             c.addCommittee(com);
             System.out.println("Committee added successfully.");
         } catch (ValidationException ex) {
             System.out.println("Error: " + ex.getMessage());
         }
     }
+
 
     public static void flowRemoveCommittee(College c) {
         System.out.println("--- Remove Committee ---");

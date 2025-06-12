@@ -1,4 +1,4 @@
-// Professor.java
+
 package ArielBotos_EytanCabalero;
 
 public class Professor extends Doctor {
@@ -15,7 +15,7 @@ public class Professor extends Doctor {
 
     public void setGrantingBody(String grantingBody) {
         if (grantingBody == null || grantingBody.trim().isEmpty())
-            throw new IllegalArgumentException("Granting body cannot be empty");
+            throw new IllegalArgumentException("Granting body cannot be empty.");
         this.grantingBody = grantingBody.trim();
     }
 

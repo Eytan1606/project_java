@@ -3,26 +3,24 @@ package ArielBotos_EytanCabalero;
 import java.util.Objects;
 
 
-public class Committee implements Comparable {
+public class Committee implements Comparable<Committee> {
     private String name;
     private Lecturer chair;
-    private Lecturer[] members;
-    private int memberCount;
-    private static final int INITIAL_SIZE = 4;
+    private CustomArray<Lecturer> members = new CustomArray<>();
+    private Degree memberDegree;
 
-    public Committee(String name, Lecturer chair) {
-        if (name == null || name.trim().isEmpty())
+    public Committee(String name, Lecturer chair, Degree memberDegree) {
+        if (name == null || name.trim().isEmpty()) {
             throw new ValidationException("Committee name cannot be empty");
-        if (chair == null)
-            throw new ValidationException("Chair cannot be null");
-        if (!chair.getDegree().canBeChair())
+        }
+        Objects.requireNonNull(chair, "Chair cannot be null");
+        Objects.requireNonNull(memberDegree, "Member degree cannot be null");
+        if (!chair.getDegree().canBeChair()) {
             throw new ValidationException("Lecturer " + chair.getName() + " cannot be chair");
-
+        }
         this.name = name.trim();
         this.chair = chair;
-        this.members = new Lecturer[INITIAL_SIZE];
-        this.memberCount = 0;
-
+        this.memberDegree = memberDegree;
         chair.addToCommittee(this);
     }
 
@@ -32,114 +30,71 @@ public class Committee implements Comparable {
 
     public void setName(String name) {
         if (name == null || name.trim().isEmpty())
-            throw new IllegalArgumentException("Committee name cannot be empty");
+            throw new IllegalArgumentException("Committee name cannot be empty.");
         this.name = name.trim();
     }
 
     public Lecturer getChair() {
         return chair;
     }
+    public Degree getMemberDegree() {
+        return memberDegree;
+    }
 
 
     public void setChair(Lecturer newChair) {
-        if (newChair == null)
-            throw new IllegalArgumentException("Chair cannot be null");
-        if (!newChair.getDegree().canBeChair())
-            throw new ValidationException("Lecturer " + newChair.getName() + " cannot be chair");
-
-        for (int i = 0; i < memberCount; i++) {
-            if (members[i].equals(newChair)) {
-
-                System.arraycopy(members, i + 1, members, i, memberCount - i - 1);
-                members[--memberCount] = null;
-                break;
-            }
+        Objects.requireNonNull(newChair, "Chair cannot be null.");
+        if (!newChair.getDegree().canBeChair()) {
+            throw new ValidationException(
+                    "Lecturer " + newChair.getName() + " cannot be chair"
+            );
         }
+
+        members.remove(newChair);
 
         if (this.chair != null) {
             this.chair.removeFromCommittee(this);
         }
+
         this.chair = newChair;
         newChair.addToCommittee(this);
     }
 
 
     public Lecturer[] getMembers() {
-        if (memberCount == 0) {
-            return new Lecturer[0];
-        }
-        Lecturer[] copy = new Lecturer[memberCount];
-        System.arraycopy(members, 0, copy, 0, memberCount);
-        return copy;
+       return members.toArray(new Lecturer[0]);
     }
 
 
-    public boolean addMember(Lecturer l) {
-        if (l == null) {
-            throw new IllegalArgumentException("Lecturer cannot be null");
+    public void addMember(Lecturer l) {
+        Objects.requireNonNull(l, "Member cannot be null");
+        if (!l.getDegree().equals(memberDegree)) {
+            throw new ValidationException(
+                    "Lecturer " + l.getName() +
+                            " must have degree " + memberDegree
+            );
         }
-        if (l.equals(chair)) {
-            return false;
+        if (members.contains(l)) {
+            throw new DuplicateEntityException("Member", l.getName());
         }
-        for (int i = 0; i < memberCount; i++) {
-            if (members[i].equals(l)) {
-                return false;
-            }
-        }
-        if (memberCount == members.length) {
-            Lecturer[] temp = new Lecturer[members.length * 2];
-            System.arraycopy(members, 0, temp, 0, members.length);
-            members = temp;
-        }
-        members[memberCount++] = l;
-        return l.addToCommittee(this);
+        members.add(l);
+        l.addToCommittee(this);
     }
 
 
     public boolean removeMember(Lecturer l) {
         if (l == null) {
-            throw new IllegalArgumentException("Lecturer cannot be null");
+            throw new IllegalArgumentException("Lecturer cannot be null.");
         }
-        int idx = -1;
-        for (int i = 0; i < memberCount; i++) {
-            if (members[i].equals(l)) {
-                idx = i;
-                break;
-            }
+        if (members.remove(l)){
+            return l.removeFromCommittee(this);
         }
-        if (idx < 0) {
-            return false;
-        }
-        Lecturer removed = members[idx];
-        System.arraycopy(members, idx + 1, members, idx, memberCount - idx - 1);
-        members[--memberCount] = null;
-        return removed.removeFromCommittee(this);
+        return false;
     }
 
 
-    public int getTotalSize() {
-        return 1 + memberCount;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if (!(o instanceof Committee)) {
-            throw new IllegalArgumentException("Cannot compare Committee with " + o.getClass());
-        }
-        Committee other = (Committee) o;
-
-        int thisArticles = 0;
-        if (this.chair instanceof Researcher) {
-            thisArticles = ((Researcher) this.chair).getArticleCount();
-        }
-        int otherArticles = 0;
-        if (other.chair instanceof Researcher) {
-            otherArticles = ((Researcher) other.chair).getArticleCount();
-        }
-
-        int cmp = Integer.compare(thisArticles, otherArticles);
-        if (cmp != 0) return cmp;
-        return Integer.compare(this.getTotalSize(), other.getTotalSize());
+    private int getTotalSize() {
+        return 1 + members.size();
     }
 
 
@@ -159,18 +114,41 @@ public class Committee implements Comparable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Committee: %s  Chair: %s  MembersCount: %d",
-                name,
-                chair.getName(),
-                memberCount));
-        if (memberCount > 0) {
+        int count = members.size();
+        sb.append(String.format(
+                "Committee: %s  Chair: %s  MemberCount: %d",
+                name, chair.getName(), count
+        ));
+
+        if (count > 0) {
             sb.append(" (Members: ");
-            for (int i = 0; i < memberCount; i++) {
-                sb.append(members[i].getName());
-                if (i < memberCount - 1) sb.append(", ");
+            Lecturer[] array = getMembers();
+            for (int i = 0; i < array.length; i++) {
+                sb.append(array[i].getName());
+                if (i < array.length - 1) sb.append(", ");
             }
             sb.append(")");
         }
         return sb.toString();
+    }
+
+
+    @Override
+    public int compareTo(Committee other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot compare Committee with null.");
+        }
+
+        int mine = (chair instanceof Researcher)
+                ? ((Researcher) chair).getArticleCount()
+                : 0;
+        int theirs = (other.chair instanceof Researcher)
+                ? ((Researcher) other.chair).getArticleCount()
+                : 0;
+
+        int cmp = Integer.compare(mine, theirs);
+        if (cmp != 0) return cmp;
+
+        return Integer.compare(this.getTotalSize(), other.getTotalSize());
     }
 }
