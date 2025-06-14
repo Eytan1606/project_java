@@ -250,27 +250,21 @@ public class College {
             throw new DuplicateEntityException("Committee", newName);
         }
 
-        // Use the new 3-arg constructor: name, chair, memberDegree
         Committee copy = new Committee(
                 newName,
                 o.getChair(),
                 o.getMemberDegree()
         );
 
-        // Copy over all members
         for (Lecturer l : o.getMembers()) {
             try {
                 copy.addMember(l);
             } catch (DuplicateEntityException ex) {
-                // shouldn’t happen—original had no duplicates
             }
         }
 
-        // Finally add it to the college
         addCommittee(copy);
     }
-
-
 
 
     @Override
@@ -586,22 +580,26 @@ public class College {
         System.out.println("--- Remove Committee Member ---");
         String cn = readNonEmpty("Committee name: ", "Committee name");
         String ln = readNonEmpty("Lecturer name: ", "Lecturer name");
+
         Committee cm = c.findCommitteeByName(cn);
         if (cm == null) {
             throw new EntityNotFoundException("Committee", cn.trim());
         }
+
         Lecturer lec = c.findLecturerByName(ln);
         if (lec == null) {
             throw new EntityNotFoundException("Lecturer", ln.trim());
         }
-        boolean removed = cm.removeMember(lec);
-        if (!removed) {
-            throw new ValidationException(
-                    "Lecturer '" + ln.trim() + "' is not a member of Committee '" + cm.getName() + "'."
-            );
+
+        try {
+            cm.removeMember(lec);
+            System.out.println("Lecturer removed from Committee successfully.");
+        } catch (EntityNotFoundException ex) {
+
+            System.out.println("Error: " + ex.getMessage());
         }
-        System.out.println("Lecturer removed from Committee successfully.");
     }
+
 
     public static String readNonEmpty(String prompt, String label) {
         while (true) {

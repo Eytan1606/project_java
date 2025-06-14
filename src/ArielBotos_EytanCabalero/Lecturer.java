@@ -54,11 +54,14 @@ public class Lecturer extends Person {
 
     public boolean removeFromCommittee(Committee c) {
         Objects.requireNonNull(c, "Committee cannot be null");
-        if (committees.remove(c)) {
-            return c.removeMember(this);
+        if (!committees.remove(c)) {
+            return false;
         }
-        return false;
+        c.removeMember(this);
+        return true;
     }
+
+
     public boolean removeFromDepartment() {
         if (department == null) {
             return false;
