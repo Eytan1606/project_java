@@ -32,7 +32,6 @@ public class College {
             return null;
         }
         String key = name.trim();
-        // במקום for על המערך הישן – לולאה על המערך שמחזיר getLecturers()
         for (Lecturer l : getLecturers()) {
             if (l.getName().equalsIgnoreCase(key)) {
                 return l;
