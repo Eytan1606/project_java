@@ -1,17 +1,20 @@
 package ArielBotos_EytanCabalero;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class College {
+public class College implements Serializable {
     private static final Scanner sc = new Scanner(System.in);
     private final String collegeName;
+     // פה אני פותח נתיב לשמור קובץ
+    private static final long serialVersionUID = 1L;
 
     private CustomArray<Lecturer> lecturers = new CustomArray<>();
     private CustomArray<Department> departments = new CustomArray<>();
     private CustomArray<Committee> committees = new CustomArray<>();
 
-    public College(String name) {
+    public College(String name){
         if (name == null || name.trim().isEmpty()) {
             throw new NullInputException();
         }
@@ -73,6 +76,12 @@ public class College {
     public Lecturer[] getLecturers() {
         return lecturers.toArray(new Lecturer[0]);
     }
+
+    public String getCollegeName() {
+        return collegeName;
+    }
+
+
 
     public void addLecturerToDepartment(String lecturerName, String deptName) {
         Lecturer lec = findLecturerByName(lecturerName);

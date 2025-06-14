@@ -1,12 +1,16 @@
 // Department.java
 package ArielBotos_EytanCabalero;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Department {
+public class Department implements Serializable {
     private String name;
     private int numStudents;
     private CustomArray<Lecturer> lecturers = new CustomArray<>();
+
+    // פה אני פותח נתיב לשמור קובץ
+    private static final long serialVersionUID = 1L;
 
 
     public Department(String name, int numStudents) {

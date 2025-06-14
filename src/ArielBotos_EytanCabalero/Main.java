@@ -10,7 +10,15 @@ public class Main {
 
     public static void main(String[] args) {
         String collegeName = readNonEmpty("Enter college name: ", "College name");
-        College college  = new College(collegeName);
+        College loaded = Persistence.load(collegeName);
+        College college = (loaded != null)
+                ? loaded
+                : new College(collegeName);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Saving data...");
+            Persistence.save(college);
+        }));
 
         while (true) {
             College.mainMenu();
@@ -18,7 +26,9 @@ public class Main {
             System.out.println();
             try {
                 switch (choice) {
-                    case 0  -> { System.out.println("Exiting. Bye!"); return; }
+                    case 0  -> { Persistence.save(college);
+                                 System.out.println("Exiting. Bye!");
+                                 System.exit(0); }
                     case 1  -> College.flowAddLecturer(college);
                     case 2  -> College.flowAddDepartment(college);
                     case 3  -> College.flowAddCommittee(college);

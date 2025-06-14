@@ -1,9 +1,12 @@
 package ArielBotos_EytanCabalero;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class CustomArray<T> {
+public class CustomArray<T>  implements Serializable {
     private final ArrayList<T> items = new ArrayList<>();
+
+    private static final long serialVersionUID = 1L;
 
     public boolean add(T item) {
         if (!items.contains(item)) {

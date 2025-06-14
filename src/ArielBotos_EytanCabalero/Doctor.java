@@ -1,9 +1,12 @@
 package ArielBotos_EytanCabalero;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Doctor extends Lecturer implements Researcher<String> {
+public class Doctor extends Lecturer implements Researcher<String> , Serializable {
     private CustomArray<String> articles = new CustomArray<>();
+
+    private static final long serialVersionUID = 1L;
 
     public Doctor(String name, int id, Degree degree, String major, double salary){
         super(name, id, degree, major, salary);

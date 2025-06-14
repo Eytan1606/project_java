@@ -1,13 +1,18 @@
 package ArielBotos_EytanCabalero;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Person implements IEmployable {
-    private String name;
-    private final int id;
+public abstract class Person implements IEmployable , Serializable {
+    protected String name;
+    protected int id;
     private Degree degree;
     private String major;
-    private double salary;
+    protected double salary;
+
+    private static final long serialVersionUID = 1L;
+
+
 
     protected Person(String name, int id, Degree degree, String major , double salary ){
         if (name == null || name.trim().isEmpty())

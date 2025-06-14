@@ -1,11 +1,14 @@
 package ArielBotos_EytanCabalero;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Lecturer extends Person {
+public class Lecturer extends Person implements Serializable {
 
     private Department department;
     private CustomArray<Committee> committees = new CustomArray<>();
+    // פה אני פותח נתיב לשמור קובץ
+    private static final long serialVersionUID = 1L;
 
     public Lecturer(String name, int id, Degree degree, String major, double salary){
         super(name, id, degree, major, salary);

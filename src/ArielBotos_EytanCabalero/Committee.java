@@ -1,13 +1,17 @@
 package ArielBotos_EytanCabalero;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 
-public class Committee implements Comparable<Committee> {
+public class Committee implements Comparable<Committee>, Serializable {
     private String name;
     private Lecturer chair;
     private Degree memberDegree;
     private CustomArray<Lecturer> members = new CustomArray<>();
+
+    // פה אני פותח נתיב לשמור קובץ
+    private static final long serialVersionUID = 1L;
 
     public Committee(String name, Lecturer chair, Degree memberDegree) {
         if (name == null || name.trim().isEmpty()) {
