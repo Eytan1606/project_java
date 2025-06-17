@@ -41,7 +41,7 @@ public class Lecturer extends Person implements Serializable {
     }
 
 
-    public boolean addToCommittee(Committee c) {
+    public void addToCommittee(Committee c) {
         Objects.requireNonNull(c, "Committee cannot be null");
 
         if (committees.contains(c)) {
@@ -52,26 +52,24 @@ public class Lecturer extends Person implements Serializable {
         }
 
         committees.add(c);
-        return true;
     }
 
-    public boolean removeFromCommittee(Committee c) {
+    public void removeFromCommittee(Committee c) {
         Objects.requireNonNull(c, "Committee cannot be null");
         if (!committees.remove(c)) {
-            return false;
+            return;
         }
         c.removeMember(this);
-        return true;
     }
 
 
-    public boolean removeFromDepartment() {
+    public void removeFromDepartment() {
         if (department == null) {
-            return false;
+            return;
         }
         Department old = department;
         department = null;
-        return old.removeLecturer(this);
+        old.removeLecturer(this);
     }
 
     @Override

@@ -8,12 +8,10 @@ public class CustomArray<T>  implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public boolean add(T item) {
+    public void add(T item) {
         if (!items.contains(item)) {
             items.add(item);
-            return true;
         }
-        return false;
     }
 
     public boolean remove(T item) {

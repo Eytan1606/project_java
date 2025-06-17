@@ -17,8 +17,8 @@ public class Persistence {
     }
 
     public static void save(College college) {
-        String fname = college.getCollegeName().trim() + ".dat";
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fname))) {
+        String fillName = college.getCollegeName().trim() + ".dat";
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fillName))) {
             out.writeObject(college);
         } catch (IOException e) {
             e.printStackTrace();

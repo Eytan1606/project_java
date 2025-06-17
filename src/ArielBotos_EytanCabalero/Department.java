@@ -40,7 +40,7 @@ public class Department implements Serializable {
         return false;
     }
 
-    public boolean removeLecturer(Lecturer l) {
+    public void removeLecturer(Lecturer l) {
         if (l == null) {
             throw new IllegalArgumentException("Lecturer cannot be null");
         }
@@ -49,7 +49,6 @@ public class Department implements Serializable {
         if (removed){
             l.setDepartment(null);
         }
-        return removed;
 
     }
     public int getLecturerCount() {

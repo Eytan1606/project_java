@@ -21,13 +21,11 @@ public class College implements Serializable {
         this.collegeName    = name.trim();
     }
 
-    public boolean addLecturer(Lecturer l) {
+    public void addLecturer(Lecturer l) {
         Objects.requireNonNull(l, "Lecturer cannot be null");
         if (!lecturers.contains(l)) {
             lecturers.add(l);
-            return true;
         }
-        return false;
     }
 
     public Lecturer findLecturerByName(String name) {
@@ -164,13 +162,12 @@ public class College implements Serializable {
     }
 
 
-    public boolean addCommittee(Committee c) {
+    public void addCommittee(Committee c) {
         Objects.requireNonNull(c, "Committee cannot be null");
         if (committees.contains(c)) {
             throw new DuplicateEntityException("Committee", c.getName());
         }
         committees.add(c);
-        return true;
     }
 
 
@@ -237,8 +234,8 @@ public class College implements Serializable {
             return 0.0;
         }
         double sum = 0.0;
-        for (int i = 0; i < lects.length; i++) {
-            sum += lects[i].getSalary();
+        for (Lecturer lect : lects) {
+            sum += lect.getSalary();
         }
         return sum / lects.length;
     }
@@ -267,7 +264,7 @@ public class College implements Serializable {
         for (Lecturer l : o.getMembers()) {
             try {
                 copy.addMember(l);
-            } catch (DuplicateEntityException ex) {
+            } catch (DuplicateEntityException _) {
             }
         }
 
@@ -324,9 +321,9 @@ public class College implements Serializable {
         String name  = readNonEmpty("Lecturer name: ", "Lecturer name");
         int    id    = readInt("Lecturer ID (>0): ", 1, Integer.MAX_VALUE);
         String[] validDegrees = { "BA", "MA", "DR", "PROF" };
-        String deg = readOption("Degree [BA, MA, DR, PROF]: ", validDegrees);
+        String deg = readOption(validDegrees);
         String major = readNonEmpty("Major: ", "Major");
-        double sal   = readDouble("Salary (>=0): ");
+        double sal   = readDouble();
 
         if ("DR".equalsIgnoreCase(deg) || "PROF".equalsIgnoreCase(deg)) {
             int numArt = readInt("Number of articles: ", 0, Integer.MAX_VALUE);
@@ -485,21 +482,21 @@ public class College implements Serializable {
         if (criterion == 1) {
             int totalArticles1 = 0;
             if (com1.getChair() instanceof Researcher) {
-                totalArticles1 += ((Researcher) com1.getChair()).getArticleCount();
+                totalArticles1 += ((Researcher<?>) com1.getChair()).getArticleCount();
             }
             for (Lecturer member : com1.getMembers()) {
                 if (member instanceof Researcher) {
-                    totalArticles1 += ((Researcher) member).getArticleCount();
+                    totalArticles1 += ((Researcher<?>) member).getArticleCount();
                 }
             }
 
             int totalArticles2 = 0;
             if (com2.getChair() instanceof Researcher) {
-                totalArticles2 += ((Researcher) com2.getChair()).getArticleCount();
+                totalArticles2 += ((Researcher<?>) com2.getChair()).getArticleCount();
             }
             for (Lecturer member : com2.getMembers()) {
                 if (member instanceof Researcher) {
-                    totalArticles2 += ((Researcher) member).getArticleCount();
+                    totalArticles2 += ((Researcher<?>) member).getArticleCount();
                 }
             }
 
@@ -636,9 +633,9 @@ public class College implements Serializable {
         }
     }
 
-    private static double readDouble(String prompt) {
+    private static double readDouble() {
         while (true) {
-            System.out.print(prompt);
+            System.out.print("Salary (>=0): ");
             try {
                 double v = Double.parseDouble(sc.nextLine().trim());
                 if (v < 0) {
@@ -651,9 +648,9 @@ public class College implements Serializable {
             }
         }
     }
-    private static String readOption(String prompt, String[] opts) {
+    private static String readOption(String[] opts) {
         while (true) {
-            System.out.print(prompt);
+            System.out.print("Degree [BA, MA, DR, PROF]: ");
             String s = sc.nextLine().trim().toUpperCase();
             for (String o : opts) {
                 if (o.equals(s)) {

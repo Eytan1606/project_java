@@ -22,8 +22,4 @@ public enum Degree implements Serializable {
         return canBeChair;
     }
 
-    public String getName() {
-        return name;
-    }
-
 }

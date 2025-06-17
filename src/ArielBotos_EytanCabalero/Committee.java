@@ -42,21 +42,6 @@ public class Committee implements Comparable<Committee>, Serializable {
         return memberDegree;
     }
 
-    public void setChair(Lecturer newChair) {
-        Objects.requireNonNull(newChair, "Chair cannot be null");
-        if (!newChair.getDegree().canBeChair()) {
-            throw new ValidationException(
-                    "Lecturer " + newChair.getName() + " cannot be chair"
-            );
-        }
-        // remove old chair's link
-        if (this.chair != null) {
-            this.chair.removeFromCommittee(this);
-        }
-        this.chair = newChair;
-        newChair.addToCommittee(this);
-    }
-
     public void addMember(Lecturer l) {
         Objects.requireNonNull(l, "Member cannot be null");
         if (!l.getDegree().equals(memberDegree)) {
@@ -88,9 +73,6 @@ public class Committee implements Comparable<Committee>, Serializable {
         return members.size();
     }
 
-    public int getTotalSize() {
-        return 1 + memberCount();
-    }
 
     @Override
     public int compareTo(Committee other) {
