@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Doctor extends Lecturer implements Researcher<String> , Serializable {
-    private CustomArray<String> articles = new CustomArray<>();
+    private  CustomArray<String> articles = new CustomArray<>();
 
     private static final long serialVersionUID = 1L;
 
