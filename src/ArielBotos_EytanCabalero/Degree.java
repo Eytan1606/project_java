@@ -13,7 +13,6 @@ public enum Degree implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final boolean canBeChair;
-    private String name;
 
     Degree(boolean canBeChair){
         this.canBeChair = canBeChair;

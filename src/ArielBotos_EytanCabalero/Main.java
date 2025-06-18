@@ -1,12 +1,11 @@
 // Ariel Botos 206205254
 // Eytan Cabalero 214180036
 package ArielBotos_EytanCabalero;
-import java.util.Scanner;
+
 
 import static ArielBotos_EytanCabalero.College.readNonEmpty;
 
 public class Main {
-    private static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
         String collegeName = readNonEmpty("Enter college name: ", "College name");

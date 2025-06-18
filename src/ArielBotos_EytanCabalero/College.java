@@ -10,9 +10,9 @@ public class College implements Serializable {
      // פה אני פותח נתיב לשמור קובץ
     private static final long serialVersionUID = 1L;
 
-    private CustomArray<Lecturer> lecturers = new CustomArray<>();
-    private CustomArray<Department> departments = new CustomArray<>();
-    private CustomArray<Committee> committees = new CustomArray<>();
+    private final CustomArray<Lecturer> lecturers = new CustomArray<>();
+    private final CustomArray<Department> departments = new CustomArray<>();
+    private final CustomArray<Committee> committees = new CustomArray<>();
 
     public College(String name){
         if (name == null || name.trim().isEmpty()) {
@@ -275,8 +275,7 @@ public class College implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof College)) return false;
-        College other = (College) o;
+        if (!(o instanceof College other)) return false;
         return this.collegeName.equalsIgnoreCase(other.collegeName);
     }
 
@@ -306,14 +305,14 @@ public class College implements Serializable {
             4  - Remove Committee
             5  - Assign Lecturer to Department
             6  - Assign Lecturer to Committee
-            7  - Remove Lecturer from Department 
+            7  - Remove Lecturer from Department\s
             8  - Remove Lecturer from Committee
             9  - Average salary (All Lecturers)
             10 - Average salary by Department
             11 - Display All Lecturers
             12 - Display All Committees
             13 - Compare two Committees(by member Count or article Count)
-            14 - Compare two professors 
+            14 - Compare two professors\s
             15 - Clone Committee\s""";
 
     public static void flowAddLecturer(College c) {
@@ -541,7 +540,7 @@ public class College implements Serializable {
             System.out.printf("⚠ Lecturer \"%s\" not found.%n", name1);
             return;
         }
-        if (!(lec1 instanceof Researcher)) {
+        if (!(lec1 instanceof Researcher r1)) {
             System.out.printf("⚠ Lecturer \"%s\" is not a researcher/Professor.%n", name1);
             return;
         }
@@ -552,13 +551,11 @@ public class College implements Serializable {
             System.out.printf("⚠ Lecturer \"%s\" not found.%n", name2);
             return;
         }
-        if (!(lec2 instanceof Researcher)) {
+        if (!(lec2 instanceof Researcher r2)) {
             System.out.printf("⚠ Lecturer \"%s\" is not a researcher/Professor.%n", name2);
             return;
         }
 
-        Researcher r1 = (Researcher) lec1;
-        Researcher r2 = (Researcher) lec2;
         int count1 = r1.getArticleCount();
         int count2 = r2.getArticleCount();
 
