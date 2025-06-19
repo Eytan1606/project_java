@@ -53,8 +53,7 @@ public abstract class Person implements IEmployable , Serializable {
     @Override
     public boolean equals(Object o){
         if (this == o) return true;
-        if (!(o instanceof Person)) return false;
-        Person other = (Person) o;
+        if (!(o instanceof Person other)) return false;
         return this.id == other.id;
     }
     @Override

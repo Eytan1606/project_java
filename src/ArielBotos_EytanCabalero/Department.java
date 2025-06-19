@@ -47,7 +47,7 @@ public class Department implements Serializable {
 
         boolean removed = lecturers.remove(l);
         if (removed){
-            l.setDepartment(null);
+            l.setDepartment();
         }
 
     }

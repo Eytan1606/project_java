@@ -5,8 +5,8 @@ import java.io.*;
 // Persistence.java
 public class Persistence {
     public static College load(String collegeName) {
-        String fname = collegeName.trim() + ".dat";
-        File f = new File(fname);
+        String FillName = collegeName.trim() + ".dat";
+        File f = new File(FillName);
         if (!f.exists()) return null;
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(f))) {
             return (College) in.readObject();

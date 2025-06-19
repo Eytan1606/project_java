@@ -15,8 +15,8 @@ public class Lecturer extends Person implements Serializable {
         this.department = null;
     }
 
-    void setDepartment(Department department){
-        this.department = department;
+    void setDepartment(){
+        this.department = null;
     }
 
     public Committee[] getCommittees() {
