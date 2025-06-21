@@ -10,7 +10,6 @@ public class Committee implements Comparable<Committee>, Serializable {
     private Degree memberDegree;
     private CustomArray<Lecturer> members = new CustomArray<>();
 
-    // פה אני פותח נתיב לשמור קובץ
     private static final long serialVersionUID = 1L;
 
     public Committee(String name, Lecturer chair, Degree memberDegree) {

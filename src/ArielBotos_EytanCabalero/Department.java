@@ -9,7 +9,7 @@ public class Department implements Serializable {
     private int numStudents;
     private CustomArray<Lecturer> lecturers = new CustomArray<>();
 
-    // פה אני פותח נתיב לשמור קובץ
+
     private static final long serialVersionUID = 1L;
 
 

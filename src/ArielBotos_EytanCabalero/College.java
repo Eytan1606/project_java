@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class College implements Serializable {
     private static final Scanner sc = new Scanner(System.in);
     private final String collegeName;
-     // פה אני פותח נתיב לשמור קובץ
+
     private static final long serialVersionUID = 1L;
 
     private final CustomArray<Lecturer> lecturers = new CustomArray<>();

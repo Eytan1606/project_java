@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class Professor extends Doctor implements Serializable {
     private String grantingBody;
-    // פה אני פותח נתיב לשמור קובץ
+
     private static final long serialVersionUID = 1L;
 
     public Professor(String name, int id, Degree degree, String major, double salary, String grantingBody) {

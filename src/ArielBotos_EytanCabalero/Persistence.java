@@ -2,7 +2,6 @@ package ArielBotos_EytanCabalero;
 
 import java.io.*;
 
-// Persistence.java
 public class Persistence {
     public static College load(String collegeName) {
         String FillName = collegeName.trim() + ".dat";

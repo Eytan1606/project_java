@@ -9,7 +9,6 @@ public enum Degree implements Serializable {
     DR(true),
     PROF(true);
 
-    // פה אני פותח נתיב לשמור קובץ
     private static final long serialVersionUID = 1L;
 
     private final boolean canBeChair;
