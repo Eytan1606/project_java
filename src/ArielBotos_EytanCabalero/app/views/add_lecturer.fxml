@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="ArielBotos_EytanCabalero.app.controllers.AddLecturerController">
+    <top>
+        <Label text="Add Lecturer" style="-fx-font-size: 24px;" BorderPane.alignment="CENTER"/>
+    </top>
+    <center>
+        <VBox spacing="10" alignment="CENTER">
+            <TextField fx:id="nameField" promptText="Lecturer Name"/>
+            <TextField fx:id="idField" promptText="Lecturer ID"/>
+            <TextField fx:id="departmentField" promptText="Department"/>
+            <Button text="Save" onAction="#handleSaveLecturer"/>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="ArielBotos_EytanCabalero.app.controllers.ViewStudentsController">
+    <top>
+        <Label text="All Students" style="-fx-font-size: 24px;" BorderPane.alignment="CENTER"/>
+    </top>
+    <center>
+        <TableView fx:id="studentsTable">
+            <columns>
+                <TableColumn text="Name"/>
+                <TableColumn text="ID"/>
+                <TableColumn text="Degree"/>
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>
